@@ -6,7 +6,7 @@ function App() {
   const { user, token, loading, logout, fetchUserProfile } = useAuth();
   const [officialHolidays, setOfficialHolidays] = useState([]);
   const [vacations, setVacations] = useState([]);
-  const [showLogin, setShowLogin] = useState(true);
+// Remove the showLogin state since it's not being used
 
   const API_BASE_URL = 'https://leave-tracking-backend.vercel.app';
 
