@@ -7,7 +7,7 @@ function App() {
   const [officialHolidays, setOfficialHolidays] = useState([]);
   const [vacations, setVacations] = useState([]);
 
-  const API_BASE_URL = 'http://localhost:5051';
+  const API_BASE_URL = 'https://leave-tracking-backend.vercel.app';
 
   const fetchOfficialHolidays = useCallback(async () => {
     try {
