@@ -1,31 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './contexts/AuthContext';
-import Login from './components/Login';
-import Register from './components/Register';
 import './App.css';
 
 function App() {
-  const { user, token, loading, login, register, logout, fetchUserProfile } = useAuth();
+  const { user, token, loading, logout, fetchUserProfile } = useAuth();
   const [officialHolidays, setOfficialHolidays] = useState([]);
   const [vacations, setVacations] = useState([]);
-  const [leaveBalances, setLeaveBalances] = useState([]);
-  const [teams, setTeams] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   const API_BASE_URL = 'http://localhost:5051';
 
-  useEffect(() => {
-    if (user && token) {
-      fetchUserProfile();
-      fetchOfficialHolidays();
-      fetchVacations();
-      fetchLeaveBalances();
-      fetchTeams();
-    }
-  }, [user, token, fetchUserProfile]);
-
-  const fetchOfficialHolidays = async () => {
+  const fetchOfficialHolidays = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/holidays`, {
         headers: {
@@ -39,9 +25,9 @@ function App() {
     } catch (error) {
       console.error('Error fetching holidays:', error);
     }
-  };
+  }, [token]);
 
-  const fetchVacations = async () => {
+  const fetchVacations = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/vacations`, {
         headers: {
@@ -55,39 +41,15 @@ function App() {
     } catch (error) {
       console.error('Error fetching vacations:', error);
     }
-  };
+  }, [token]);
 
-  const fetchLeaveBalances = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/leave-balances`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setLeaveBalances(data);
-      }
-    } catch (error) {
-      console.error('Error fetching leave balances:', error);
+  useEffect(() => {
+    if (user && token) {
+      fetchUserProfile();
+      fetchOfficialHolidays();
+      fetchVacations();
     }
-  };
-
-  const fetchTeams = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/teams`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setTeams(data);
-      }
-    } catch (error) {
-      console.error('Error fetching teams:', error);
-    }
-  };
+  }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -243,13 +205,19 @@ function App() {
                 </h3>
                 <div className="text-center">
                   <div className="flex items-center justify-between mb-4">
-                    <button className="text-gray-500 hover:text-gray-700">
+                    <button 
+                      className="text-gray-500 hover:text-gray-700"
+                      onClick={() => setCurrentMonth(prev => prev === 0 ? 11 : prev - 1)}
+                    >
                       ←
                     </button>
                     <h4 className="text-lg font-medium">
                       {new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                     </h4>
-                    <button className="text-gray-500 hover:text-gray-700">
+                    <button 
+                      className="text-gray-500 hover:text-gray-700"
+                      onClick={() => setCurrentMonth(prev => prev === 11 ? 0 : prev + 1)}
+                    >
                       →
                     </button>
                   </div>
@@ -259,63 +227,4 @@ function App() {
                         {day}
                       </div>
                     ))}
-                    {Array.from({ length: new Date(currentYear, currentMonth + 1, 0).getDate() }, (_, i) => i + 1).map(day => (
-                      <div key={day} className="p-2 border rounded hover:bg-gray-50">
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  <button className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                    Official Holidays
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Vacations 2025 */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  Vacations 2025
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Vacation Name"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      placeholder="Start Date"
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      placeholder="End Date"
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>EL</option>
-                      <option>SL</option>
-                      <option>CL</option>
-                    </select>
-                  </div>
-                  <button className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-                    Add Vacation
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-export default App;
+                    {Arra
