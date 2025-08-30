@@ -109,7 +109,7 @@ function App() {
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
                   <button
-                    onClick={() => setShowLogin(false)}
+                    onClick={() => alert('Registration feature coming soon!')}
                     className="font-medium text-indigo-600 hover:text-indigo-500"
                   >
                     Create one here
