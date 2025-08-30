@@ -6,8 +6,7 @@ function App() {
   const { user, token, loading, logout, fetchUserProfile } = useAuth();
   const [officialHolidays, setOfficialHolidays] = useState([]);
   const [vacations, setVacations] = useState([]);
-  const [showLogin, setShowLogin] = useState(true);
-
+  
   const API_BASE_URL = 'https://leave-tracking-backend.vercel.app';
 
   const fetchOfficialHolidays = useCallback(async () => {
@@ -109,7 +108,6 @@ function App() {
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
                   <button
-                    onClick={() => setShowLogin(false)}
                     className="font-medium text-indigo-600 hover:text-indigo-500"
                   >
                     Create one here
