@@ -99,10 +99,17 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={leaveBalances?.EL || 30}
-                onChange={(e) => setLeaveBalances(prev => ({ ...prev, EL: parseInt(e.target.value) || 0 }))}
+                value={leaveBalances?.EL || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setLeaveBalances(prev => ({ 
+                    ...prev, 
+                    EL: value === '' ? 0 : parseInt(value) || 0 
+                  }));
+                }}
                 className="w-full text-2xl font-bold text-blue-600 bg-transparent border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 text-center"
                 min="0"
+                placeholder="0"
               />
             ) : (
               <div className="text-2xl font-bold text-blue-600">
@@ -116,10 +123,17 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={leaveBalances?.SL || 6}
-                onChange={(e) => setLeaveBalances(prev => ({ ...prev, SL: parseInt(e.target.value) || 0 }))}
+                value={leaveBalances?.SL || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setLeaveBalances(prev => ({ 
+                    ...prev, 
+                    SL: value === '' ? 0 : parseInt(value) || 0 
+                  }));
+                }}
                 className="w-full text-2xl font-bold text-green-600 bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-green-500 text-center"
                 min="0"
+                placeholder="0"
               />
             ) : (
               <div className="text-2xl font-bold text-green-600">
@@ -133,10 +147,17 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={leaveBalances?.CL || 3}
-                onChange={(e) => setLeaveBalances(prev => ({ ...prev, CL: parseInt(e.target.value) || 0 }))}
+                value={leaveBalances?.CL || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setLeaveBalances(prev => ({ 
+                    ...prev, 
+                    CL: value === '' ? 0 : parseInt(value) || 0 
+                  }));
+                }}
                 className="w-full text-2xl font-bold text-yellow-600 bg-transparent border-b-2 border-yellow-300 focus:outline-none focus:border-yellow-500 text-center"
                 min="0"
+                placeholder="0"
               />
             ) : (
               <div className="text-2xl font-bold text-yellow-600">
