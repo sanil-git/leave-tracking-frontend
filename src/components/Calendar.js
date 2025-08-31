@@ -135,8 +135,11 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => {
+                  console.log('Previous button clicked!');
                   const newDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+                  console.log('New date calculated:', newDate);
                   setDate(newDate);
+                  console.log('Date state updated');
                   handleNavigate(newDate, view, 'PREV');
                 }}
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
@@ -147,8 +150,11 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
               
               <button
                 onClick={() => {
+                  console.log('Today button clicked!');
                   const today = new Date();
+                  console.log('Today date:', today);
                   setDate(today);
+                  console.log('Date state updated to today');
                   handleNavigate(today, view, 'TODAY');
                 }}
                 className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md transform hover:scale-105"
@@ -159,8 +165,11 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
               
               <button
                 onClick={() => {
+                  console.log('Next button clicked!');
                   const newDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+                  console.log('New date calculated:', newDate);
                   setDate(newDate);
+                  console.log('Date state updated');
                   handleNavigate(newDate, view, 'NEXT');
                 }}
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
