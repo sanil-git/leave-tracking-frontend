@@ -9,53 +9,72 @@ Streamline leave management by providing a centralized platform to track holiday
 ## ✨ Features
 
 ### 📅 Calendar & Holidays
-- **Interactive Calendar**: Monthly view with event display
-- **Navigation**: Easy month-to-month navigation with Today/Previous/Next controls
-- **Official Holidays**: Integration with official Indian holidays database
+- **Interactive Calendar**: Monthly, weekly, and daily views with event display
+- **Smart Navigation**: Click on vacation dates to navigate calendar to that month
+- **Official Holidays**: Integration with official Indian holidays database via API
 - **Event Display**: Visual representation of all time off on calendar
+- **Custom Toolbar**: Modern calendar controls with month display and view switching
 
 ### 🏖️ Holiday Management
-- **Add Holidays**: Create custom holidays with name and date
+- **Add Holidays**: Create custom holidays with name and date on single line
 - **Delete Holidays**: Remove holidays with trash button
-- **Display Format**: Holiday name with date in horizontal layout
+- **Official Indian Holidays**: Compact tab for official holidays from API
 - **Real-time Updates**: Changes reflect immediately on calendar
+- **Compact Layout**: Holiday name, date, and add button all on one line
 
 ### ✈️ Vacation Planning
 - **Multi-day Vacations**: Plan vacations with start and end dates
-- **Smart Validation**: End date must be after start date
-- **Duration Display**: Automatic calculation of vacation length
+- **Smart Date Handling**: Auto-focus end date, prevent past dates, auto-navigate to start month
+- **Leave Type Integration**: Select EL, SL, or CL with automatic balance deduction
 - **Calendar Integration**: Vacations span multiple days on calendar
+- **Minimalistic Form**: Clean, modern vacation request interface
 
 ### 🎯 Vacation Planner (Right Panel)
-- **Long Weekend Opportunities**: Highlights holidays on Monday/Friday for extended time off
-- **Planned Vacations**: Overview of all scheduled vacations with duration
-- **Visual Indicators**: Color-coded cards (blue for holidays, green for vacations)
-- **Quick Reference**: Easy planning for optimal vacation timing
+- **Leave Balance Management**: Editable EL, SL, CL balances with real-time updates
+- **Long Weekend Opportunities**: Highlights future holidays on Monday/Friday for extended time off
+- **Planned Vacations**: Overview of all scheduled vacations with clickable dates
+- **Quick Stats**: Enhanced statistics with historical data and insights
+- **Historical Data**: Leave balance history, vacation patterns, and time insights
+
+### 🔐 Authentication & User Management
+- **Secure Login/Register**: JWT-based authentication system
+- **User Profiles**: Personal leave balances and vacation data
+- **Data Isolation**: Each user sees only their own information
+- **Session Management**: Persistent login with secure token storage
 
 ## 🛠️ Technical Stack
 
-- **Frontend**: React.js with modern hooks
+- **Frontend**: React.js with modern hooks (useState, useEffect, useContext, useRef)
 - **Styling**: Tailwind CSS + custom inline styles
 - **Icons**: Lucide React for consistent iconography
-- **Calendar**: React Big Calendar for robust calendar functionality
+- **Calendar**: React Big Calendar with custom navigation
 - **Font**: Roboto for clean, readable typography
-- **Backend**: Node.js/Express (ready for integration)
+- **Backend**: Node.js/Express with MongoDB Atlas
+- **State Management**: Centralized state with prop synchronization
+- **Date Handling**: date-fns for smart date operations
 
 ## 📁 File Structure
 
 ```
-leave-tracking/
+leave-tracking-frontend/
 ├── public/
 │   ├── index.html              # Main HTML template with Roboto font
 │   ├── favicon.ico             # App icon
 │   ├── manifest.json           # PWA manifest
 │   └── robots.txt              # SEO robots file
 ├── src/
-│   ├── App.js                  # Main React component with all functionality
+│   ├── App.js                  # Main React component with centralized state
 │   ├── App.css                 # Basic app styles
 │   ├── index.js                # React entry point
-│   ├── index.css               # Global styles and Roboto font
+│   ├── index.css               # Global styles and Tailwind CSS
 │   ├── calendar-tailwind.css   # Calendar component overrides
+│   ├── components/
+│   │   ├── Calendar.js         # Interactive calendar with navigation
+│   │   ├── HolidayManagement.js # Holiday management with compact form
+│   │   ├── VacationForm.js     # Smart vacation request form
+│   │   └── VacationPlanner.js  # Leave balances and planning insights
+│   ├── contexts/
+│   │   └── AuthContext.js      # Authentication state management
 │   ├── service-worker.js       # PWA service worker
 │   └── serviceWorkerRegistration.js # Service worker registration
 ├── package.json                # Dependencies and scripts
@@ -72,78 +91,80 @@ The app is fully integrated with a Node.js/Express backend. All API endpoints ar
 - `GET /holidays` - Fetch all holidays
 - `POST /holidays` - Create new holiday
 - `DELETE /holidays/:id` - Remove holiday
-- `GET /holidays/official` - Fetch official Indian holidays
+- `GET /holidays/official` - Fetch official Indian holidays from external API
 
 ### Vacations API ✅
-- `GET /vacations` - Fetch all vacations
-- `POST /vacations` - Create new vacation
+- `GET /vacations` - Fetch all vacations (user-specific or global)
+- `POST /vacations` - Create new vacation with leave type
 - `PUT /vacations/:id` - Update vacation
 - `DELETE /vacations/:id` - Remove vacation
 
-### Teams API ✅
-- `GET /teams` - Fetch all teams
-- `POST /teams` - Create new team
-- `PUT /teams/:id` - Update team
-- `DELETE /teams/:id` - Remove team
-
 ### Leave Balances API ✅
-- `GET /leave-balances` - Fetch leave balances
-- `PUT /leave-balances/:type` - Update leave balance
+- `GET /leave-balances` - Fetch leave balances (user-specific or global)
+- `PUT /leave-balances/:leaveType` - Update leave balance (EL, SL, CL)
+
+### Authentication API ✅
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User authentication
+- `GET /auth/profile` - User profile data
 
 ## 🔧 Component Architecture
 
 ### Main Components
-- **App.js**: Main container with state management and authentication
-- **Calendar**: React Big Calendar integration
-- **HolidayForm**: Add/remove holiday functionality
-- **VacationForm**: Add/remove vacation functionality
-- **VacationPlanner**: Right panel with planning insights
+- **App.js**: Main container with centralized state management and authentication
+- **Calendar**: React Big Calendar with custom navigation and date synchronization
+- **HolidayManagement**: Holiday management with compact single-line form
+- **VacationForm**: Smart vacation request form with date validation
+- **VacationPlanner**: Right panel with leave balances, planning insights, and historical data
 
 ### Authentication Components
-- **AuthContext**: Global authentication state management
+- **AuthContext**: Global authentication state management with JWT
 - **Login**: User login form with validation
 - **Register**: User registration form with email validation
 - **Protected Routes**: App only accessible to authenticated users
 
 ### State Management
-- `indianHolidays`: Array of holiday objects
-- `vacations`: Array of vacation objects
-- `teams`: Array of team objects (future)
-- `currentDate`: Current calendar date
-- `allEvents`: Calendar events (holidays + vacations)
+- **Centralized State**: Leave balances managed in App.js and synchronized to components
+- **Prop Synchronization**: Child components sync with parent state when not editing
+- **Calendar Navigation**: External date navigation with internal state synchronization
+- **Real-time Updates**: All changes update calendar and components immediately
 
 ## 🚀 Getting Started
 
 ### **Prerequisites:**
 - Node.js installed
 - MongoDB Atlas account (for cloud database)
+- Git for version control
 
 ### **1. Backend Setup**
 ```bash
-cd backend
+cd leave-tracking-backend
 npm install
 # Create .env file with your MongoDB connection string
 echo "MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/test?retryWrites=true&w=majority" > .env
+echo "JWT_SECRET=your-secret-key-change-in-production" >> .env
 npm start
 ```
 
 ### **2. Frontend Setup**
 ```bash
-cd leave-tracking
+cd leave-tracking-frontend
 npm install
 npm start
 ```
 
 ### **3. Access Application**
 - **Frontend**: Open `http://localhost:3000`
-- **Backend**: Running on `http://localhost:5051`
+- **Backend**: Running on `http://localhost:8000`
 - **Database**: MongoDB Atlas cloud (fully working)
 
 ### **4. Test Features**
-- ✅ Add/remove holidays
-- ✅ Plan vacations
-- ✅ Update leave balances
-- ✅ Manage teams
+- ✅ Add/remove holidays with compact form
+- ✅ Plan vacations with smart date handling
+- ✅ Edit leave balances (EL, SL, CL) with real-time updates
+- ✅ Navigate calendar by clicking on vacation dates
+- ✅ View long weekend opportunities for future dates
+- ✅ Access historical data and insights
 - ✅ All data persists in MongoDB cloud
 
 ### **5. Test Authentication**
@@ -157,19 +178,19 @@ npm start
 ### **Can't Add Vacations/Holidays?**
 **Problem**: Backend connection issues or missing MongoDB setup
 **Solutions**: 
-1. **Use Local Backend**: `cd backend && npm start` (Recommended for development)
+1. **Use Local Backend**: `cd leave-tracking-backend && npm start` (Recommended for development)
 2. **Check MongoDB**: Ensure MongoDB connection string is set in `.env` file
-3. **Check Ports**: Ensure ports 5051 (backend) and 3000 (frontend) are available
+3. **Check Ports**: Ensure ports 8000 (backend) and 3000 (frontend) are available
 4. **Use Startup Script**: Run `./start-app.sh` from the root directory
 
 ### **API Connection Issues**
 - **Frontend**: Runs on localhost:3000
-- **Backend**: Runs on localhost:5051
+- **Backend**: Runs on localhost:8000
 - **Database**: MongoDB Atlas (cloud) - FULLY WORKING ✅
 - **Status**: Both servers need to be running locally for full functionality
 
 ### **Quick Fix Steps**
-1. Create `.env` file in `backend/` directory with your MongoDB connection string
+1. Create `.env` file in `leave-tracking-backend/` directory with your MongoDB connection string
 2. Run `./start-app.sh` from the root directory
 3. Or manually start both servers in separate terminals
 
@@ -179,27 +200,32 @@ npm start
 - **Responsive Design**: Optimized for desktop and tablet use
 - **Modern UI**: Rounded corners, subtle shadows, and consistent spacing
 - **Color Coding**: Blue for holidays, green for vacations, red for delete actions
+- **Compact Forms**: Single-line layouts for better space utilization
+- **Smart Navigation**: Click dates to navigate calendar to specific months
 
 ## 🔧 Key Functions
 
-- **Add/Remove Holidays**: Simple form with date picker
-- **Add/Remove Vacations**: Three-field form (name, from date, to date)
-- **Calendar Navigation**: Month navigation with visual feedback
-- **Smart Filtering**: Automatic detection of Monday/Friday holidays
+- **Add/Remove Holidays**: Compact form with date picker on single line
+- **Add/Remove Vacations**: Smart form with auto-focus, date validation, and leave type selection
+- **Calendar Navigation**: Month navigation with external date synchronization
+- **Leave Balance Management**: Editable EL, SL, CL balances with real-time updates
+- **Smart Filtering**: Automatic detection of future Monday/Friday holidays
 - **Duration Calculation**: Automatic vacation length computation
 - **Real-time Sync**: All changes update calendar immediately
+- **Historical Data**: Leave usage patterns and time insights
 
 ## 🎨 Design Philosophy
 
-- **Minimalist**: Clean, uncluttered interface
+- **Minimalist**: Clean, uncluttered interface with reduced spacing
 - **Functional**: Every element serves a purpose
 - **Consistent**: Uniform styling and spacing throughout
 - **Accessible**: Clear labels and intuitive interactions
+- **Modern**: Contemporary design with subtle animations and hover effects
 
-## 🎉 **CURRENT STATUS: FULLY FUNCTIONAL WITH AUTHENTICATION!** ✅
+## 🎉 **CURRENT STATUS: FULLY FUNCTIONAL WITH ENHANCED FEATURES!** ✅
 
 ### **What's Working Now:**
-- ✅ **Backend API Integration** - Express.js server running on port 5051
+- ✅ **Backend API Integration** - Express.js server running on port 8000
 - ✅ **MongoDB Atlas Cloud Database** - All data persisting in the cloud
 - ✅ **Full CRUD Operations** - Create, Read, Update, Delete for all features
 - ✅ **Real-time Data Sync** - Frontend and backend fully synchronized
@@ -207,11 +233,16 @@ npm start
 - ✅ **User Authentication System** - JWT-based secure authentication
 - ✅ **Multi-User Support** - Each user has their own isolated data
 - ✅ **Professional UI** - Modern login/register forms with validation
+- ✅ **Smart Date Handling** - Auto-focus, validation, and month navigation
+- ✅ **Leave Balance System** - Editable balances with automatic deduction
+- ✅ **Calendar Navigation** - Click dates to navigate to specific months
+- ✅ **Historical Data** - Leave usage patterns and insights
+- ✅ **Compact UI** - Reduced spacing and single-line forms
 
 ### **Database Collections Working:**
-- ✅ **`holidays`** - 8+ documents, full holiday management
-- ✅ **`vacations`** - Vacation planning and tracking
-- ✅ **`leavebalances`** - EL, SL, CL balance management  
+- ✅ **`holidays`** - Full holiday management with API integration
+- ✅ **`vacations`** - Vacation planning with leave type integration
+- ✅ **`leavebalances`** - EL, SL, CL balance management with real-time updates
 - ✅ **`teams`** - Team structure and management
 - ✅ **`users`** - User accounts with secure password hashing
 
@@ -222,6 +253,18 @@ npm start
 - ✅ **Email Validation** - Real-time format validation
 - ✅ **Session Management** - Persistent login with localStorage
 - ✅ **User Isolation** - Each user sees only their own data
+
+### **Recent Major Improvements (Today):**
+- ✅ **Calendar Navigation Fix** - Click vacation dates to navigate calendar
+- ✅ **Leave Balance Editing** - Real-time editable EL, SL, CL balances
+- ✅ **Smart Date Handling** - Auto-focus, validation, and month navigation
+- ✅ **Compact UI** - Reduced spacing and single-line forms
+- ✅ **Historical Data** - Leave usage patterns and insights
+- ✅ **Long Weekend Filtering** - Only future dates shown
+- ✅ **API Integration** - Official Indian holidays from external API
+- ✅ **State Synchronization** - Proper parent-child component communication
+- ✅ **Git Sync** - Complete synchronization with GitHub repositories
+- ✅ **Vercel Deployment** - Frontend successfully deployed and auto-deploying
 
 ## 🔮 Future Enhancements
 
@@ -253,21 +296,21 @@ npm start
 - **Alternative**: Continue using local backend with MongoDB Atlas
 - **Status**: Local backend working perfectly with cloud database
 
-### 2. 🔐 User Authentication System
+### 3. 🔐 User Authentication System
 - **User Registration & Login**: Secure email/password authentication
 - **JWT Token Management**: Secure session handling
 - **User Profiles**: Personal leave balances and preferences
 - **Protected Routes**: Secure access to app features
 - **Password Security**: Encrypted password storage and recovery
 
-### 3. ☁️ Cloud Database Integration
+### 4. ☁️ Cloud Database Integration
 - **MongoDB Atlas Setup**: Cloud database for production
 - **Data Persistence**: User data saved across sessions
 - **Multi-user Support**: Each user has their own data
 - **Backup & Recovery**: Automated data backup systems
 - **Scalability**: Handle multiple users and teams
 
-### 4. 🎯 Additional Features
+### 5. 🎯 Additional Features
 - **Team Management**: Create and manage team structures
 - **Leave Approvals**: Workflow for leave requests
 - **Notifications**: Email/calendar reminders
@@ -277,3 +320,31 @@ npm start
 ## 📝 License
 
 This project is open source and available under the MIT License.
+
+## 🔄 **Deployment & Version Control Status**
+
+### **GitHub Sync Status:**
+- ✅ **Backend Repository**: `sanil-git/leave-tracking-backend` - Fully synced
+- ✅ **Frontend Repository**: `sanil-git/leave-tracking-frontend` - Fully synced
+- ✅ **Local Cursor Code**: Latest version with all improvements
+- ✅ **Merge Conflicts**: Resolved by keeping local Cursor version
+- ✅ **Git Workflow**: Cursor → GitHub → Vercel sequence established
+
+### **Vercel Deployment Status:**
+- ✅ **Frontend**: Successfully deployed and auto-deploying on commits
+- ✅ **Backend**: Local development (MongoDB Atlas cloud database)
+- ✅ **Auto-deployment**: Working correctly after ESLint fixes
+- ✅ **Build Status**: All builds successful
+
+### **Current Development Workflow:**
+1. **Develop in Cursor** - Make changes and test locally
+2. **Commit to GitHub** - Push changes to remote repositories
+3. **Auto-deploy to Vercel** - Frontend automatically updates
+4. **Backend remains local** - Using MongoDB Atlas for cloud database
+
+### **Environment Configuration:**
+- **Frontend**: React app with Tailwind CSS
+- **Backend**: Node.js/Express with MongoDB Atlas
+- **Database**: MongoDB Atlas cloud (fully functional)
+- **Authentication**: JWT-based with secure password hashing
+- **Ports**: Frontend (3000), Backend (8000)
