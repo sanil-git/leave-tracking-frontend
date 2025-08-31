@@ -19,7 +19,7 @@ const localizer = dateFnsLocalizer({
 const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
   const [view, setView] = useState('month');
   // Use currentDate from parent, fallback to current date if not provided
-  const date = currentDate || new Date();
+  const date = useMemo(() => currentDate || new Date(), [currentDate]);
 
 
 
