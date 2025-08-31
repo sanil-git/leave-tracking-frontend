@@ -198,7 +198,6 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
         style={{ height: 600 }}
         view={view}
         onView={handleViewChange}
-        onNavigate={handleNavigate}
         date={date}
         toolbar={false}
         eventPropGetter={eventStyleGetter}
