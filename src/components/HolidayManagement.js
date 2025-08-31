@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Calendar, ChevronDown, ChevronRight } from 'lucide-react';
+import NationalHolidays from './NationalHolidays';
 
-const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday }) => {
+const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token }) => {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [isHolidaysExpanded, setIsHolidaysExpanded] = useState(false);
@@ -26,20 +27,20 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday }) => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <Calendar className="w-5 h-5 mr-2 text-blue-600" />
-          Holiday Management
-        </div>
-        <a
-          href="https://calendar.google.com/calendar/ical/en.indian%23holiday%40group.v.calendar.google.com/public/basic.ics"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs px-3 py-1 bg-orange-100 text-orange-700 rounded-full hover:bg-orange-200 transition-colors duration-200 flex items-center"
-        >
-          🇮🇳 Official Indian Holidays
-        </a>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+        <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+        Holiday Management
       </h3>
+      
+      {/* Official Indian Holidays Section */}
+      <div className="mb-4">
+        <NationalHolidays 
+          onAddHoliday={onAddHoliday}
+          API_BASE_URL={API_BASE_URL}
+          token={token}
+          existingHolidays={holidays}
+        />
+      </div>
       
       {/* Add Holiday Form */}
       <form onSubmit={handleSubmit} className="mb-6">

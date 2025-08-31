@@ -34,7 +34,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching holidays:', error);
     }
-  }, [token]);
+  }, [token, API_BASE_URL]);
 
   const fetchVacations = useCallback(async () => {
     try {
@@ -54,7 +54,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching vacations:', error);
     }
-  }, [token]);
+  }, [token, API_BASE_URL]);
 
   const fetchLeaveBalances = useCallback(async () => {
     try {
@@ -112,7 +112,7 @@ function App() {
       // Keep default values if API fails
       console.log('Using default leave balances');
     }
-  }, [token]);
+  }, [token, API_BASE_URL]);
 
   useEffect(() => {
     if (user && token) {
@@ -229,6 +229,8 @@ function App() {
               {/* Holiday Management Section */}
               <HolidayManagement
                 holidays={officialHolidays}
+                API_BASE_URL={API_BASE_URL}
+                token={token}
                 onAddHoliday={async (holidayData) => {
                   try {
                     const response = await fetch(`${API_BASE_URL}/holidays`, {

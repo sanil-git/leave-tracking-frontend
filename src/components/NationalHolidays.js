@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Plus, Flag, RefreshCw, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
-const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token }) => {
+const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays }) => {
   const [nationalHolidays, setNationalHolidays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() + i);
+  const years = Array.from({ length: 5 }, (i) => new Date().getFullYear() + i);
+
+  // Filter out holidays that are already in the user's list
+  const availableHolidays = nationalHolidays.filter(nationalHoliday => {
+    return !existingHolidays.some(existingHoliday => 
+      existingHoliday.name === nationalHoliday.name && 
+      existingHoliday.date === nationalHoliday.date
+    );
+  });
 
   const fetchOfficialIndianHolidays = async () => {
     setLoading(true);
@@ -78,7 +86,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token }) => {
             <Flag className="w-4 h-4 text-orange-600" />
           </div>
           <span className="font-medium text-gray-900">Official Indian Holidays</span>
-          <span className="text-sm text-gray-500">({nationalHolidays.length} available)</span>
+          <span className="text-sm text-gray-500">({availableHolidays.length} available)</span>
         </div>
         {isExpanded ? (
           <ChevronDown className="w-5 h-5 text-gray-500" />
@@ -143,7 +151,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token }) => {
                     defaultValue=""
                   >
                     <option value="" disabled>Choose a holiday to add...</option>
-                    {nationalHolidays.map((holiday, index) => (
+                    {availableHolidays.map((holiday, index) => (
                       <option key={index} value={holiday.name}>
                         {holiday.name} - {formatDate(holiday.date)}
                       </option>
@@ -155,7 +163,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Quick Add All</label>
                   <div className="grid grid-cols-2 gap-2">
-                    {nationalHolidays.map((holiday, index) => (
+                    {availableHolidays.map((holiday, index) => (
                       <button
                         key={index}
                         onClick={() => handleAddHoliday(holiday)}
@@ -174,7 +182,12 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token }) => {
             ) : !error ? (
               <div className="text-center py-4 text-gray-500">
                 <Flag className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm">No holidays found for {selectedYear}</p>
+                <p className="text-sm">
+                  {availableHolidays.length === 0 && nationalHolidays.length > 0 
+                    ? `All ${nationalHolidays.length} holidays for ${selectedYear} are already added!`
+                    : `No holidays found for ${selectedYear}`
+                  }
+                </p>
               </div>
             ) : null}
           </div>
