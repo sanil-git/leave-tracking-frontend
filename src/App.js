@@ -120,7 +120,7 @@ function App() {
       fetchVacations();
       fetchLeaveBalances();
     }
-  }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations, fetchLeaveBalances]);
+  }, [user, token]); // Only depend on user and token, not the fetch functions
 
   if (loading) {
     return <div>Loading...</div>;

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo } from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
@@ -16,7 +16,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
+const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
   const [view, setView] = useState('month');
   const [date, setDate] = useState(currentDate || new Date());
 
@@ -113,8 +113,10 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
 
 
 
-  // Debug logging
-  console.log('Calendar render:', { view, date, eventsCount: events.length });
+  // Debug logging - only log when values actually change
+  useEffect(() => {
+    console.log('Calendar render:', { view, date, eventsCount: events.length });
+  }, [view, date, events.length]);
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '700px' }}>
@@ -229,5 +231,7 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
     </div>
   );
 };
+
+});
 
 export default Calendar;
