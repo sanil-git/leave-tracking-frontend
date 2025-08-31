@@ -53,6 +53,26 @@ Streamline leave management by providing a centralized platform to track holiday
 - **State Management**: Centralized state with prop synchronization
 - **Date Handling**: date-fns for smart date operations
 
+## 🏗️ **Hosting Architecture**
+
+### **Current Deployment Strategy:**
+- **Frontend**: Vercel (auto-deploying, optimized for React apps)
+- **Backend**: Render (free tier, persistent connections for MongoDB)
+- **Database**: MongoDB Atlas (cloud database, fully functional)
+
+### **Why Render for Backend?**
+- ✅ **Persistent Connections** - Better for MongoDB Atlas integration
+- ✅ **Multi-User Support** - Handles 10-20 concurrent users efficiently
+- ✅ **Free Tier Available** - No cost for hosting
+- ✅ **Reliable Performance** - No cold start issues like serverless platforms
+- ✅ **MongoDB Compatibility** - Stable connections for database operations
+
+### **Why Vercel for Frontend?**
+- ✅ **Auto-Deployment** - Automatic updates on GitHub commits
+- ✅ **React Optimization** - Built specifically for React applications
+- ✅ **Global CDN** - Fast loading worldwide
+- ✅ **Build Optimization** - Automatic optimization and compression
+
 ## 📁 File Structure
 
 ```
@@ -190,6 +210,19 @@ npm start
 3. **Check Ports**: Ensure ports 8000 (backend) and 3000 (frontend) are available
 4. **Use Startup Script**: Run `./start-app.sh` from the root directory
 
+### **Backend Deployment Issues?**
+**Problem**: Vercel backend failing with MongoDB connection errors
+**Solution**: 
+- **Use Render Backend** - Better for persistent MongoDB connections
+- **MongoDB Atlas** - Cloud database works perfectly with Render
+- **Free Hosting** - Render provides free tier for backend hosting
+
+### **Why Not Vercel Backend?**
+- ❌ **Serverless Limitations** - Cold starts, connection timeouts
+- ❌ **MongoDB Issues** - Connection pooling problems in serverless environment
+- ❌ **Multi-User Support** - Not ideal for 10-20 concurrent users
+- ✅ **Render Alternative** - Persistent connections, better MongoDB support
+
 ### **API Connection Issues**
 - **Frontend**: Runs on localhost:3000
 - **Backend**: Runs on localhost:8000
@@ -278,6 +311,12 @@ npm start
 - ✅ **Faster Operations** - Holiday add/delete operations now much more responsive
 - ✅ **Build Optimization** - ESLint errors resolved, clean production builds
 
+### **Strategic Infrastructure Decisions:**
+- ✅ **Render Backend** - Switched from Vercel backend for better MongoDB support
+- ✅ **Persistent Connections** - Solved MongoDB connection issues
+- ✅ **Multi-User Architecture** - Designed for 10-20 concurrent users
+- ✅ **Free Hosting Solution** - Render free tier for backend, Vercel for frontend
+
 ## 🔮 Future Enhancements
 
 ### **Authentication & Security:**
@@ -341,6 +380,19 @@ This project is open source and available under the MIT License.
 - ✅ **Local Cursor Code**: Latest version with all improvements
 - ✅ **Merge Conflicts**: Resolved by keeping local Cursor version
 - ✅ **Git Workflow**: Cursor → GitHub → Vercel sequence established
+
+### **Deployment Workflow:**
+1. **Development**: Code changes in Cursor (local)
+2. **Version Control**: Commit and push to GitHub
+3. **Frontend Deploy**: Vercel auto-deploys frontend changes
+4. **Backend Deploy**: Render backend (separate from Vercel)
+5. **Database**: MongoDB Atlas (cloud, always accessible)
+
+### **Current Hosting Status:**
+- ✅ **Frontend (Vercel)**: Auto-deploying, fully functional
+- ✅ **Backend (Render)**: Free tier, persistent connections
+- ✅ **Database (MongoDB Atlas)**: Cloud database, reliable performance
+- ✅ **Multi-User Support**: 10-20 concurrent users supported
 
 ### **Vercel Deployment Status:**
 - ✅ **Frontend**: Successfully deployed and auto-deploying on commits
