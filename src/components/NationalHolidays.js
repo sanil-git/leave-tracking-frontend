@@ -38,10 +38,6 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
   }, [nationalHolidays, existingHolidays]);
 
   const fetchOfficialIndianHolidays = useCallback(async () => {
-    console.log('Fetching holidays for year:', currentYear);
-    console.log('API URL:', `${API_BASE_URL}/holidays/official?year=${currentYear}`);
-    console.log('Token:', token ? 'Present' : 'Missing');
-    
     setLoading(true);
     setError(null);
     try {
@@ -55,19 +51,10 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
         }
       );
       
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-      
       if (response.ok) {
         const responseData = await response.json();
-        console.log('Holidays received:', responseData);
         // Extract holidays from the response object
         const holidays = responseData.holidays || responseData;
-        console.log('Raw holidays data:', holidays);
-        if (holidays.length > 0) {
-          console.log('First holiday sample:', holidays[0]);
-          console.log('First holiday date field:', holidays[0].date);
-        }
         setNationalHolidays(holidays);
       } else {
         const errorText = await response.text();
@@ -85,8 +72,6 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
   }, [API_BASE_URL, token]);
 
   const handleAddHoliday = (holiday) => {
-    console.log('Adding holiday:', holiday);
-    
     // Extract the actual date string from the holiday object
     let dateString;
     if (typeof holiday.date === 'object' && holiday.date.iso) {
@@ -100,15 +85,11 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
       return;
     }
     
-    console.log('Extracted date string:', dateString);
-    
     const holidayData = {
       name: holiday.name,
       date: dateString
     };
     
-    console.log('Sending holiday data:', holidayData);
-    console.log('Calling onAddHoliday with:', holidayData);
     onAddHoliday(holidayData);
     
     // Don't close popup - let user add multiple holidays
@@ -141,14 +122,9 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     });
   }, []);
 
-  // Fetch holidays when component mounts
+  // Fetch holidays when component mounts or when expanded (if not already loaded)
   useEffect(() => {
-    fetchOfficialIndianHolidays();
-  }, [fetchOfficialIndianHolidays]);
-  
-  // Also fetch when expanded (in case it wasn't fetched before)
-  useEffect(() => {
-    if (isExpanded && nationalHolidays.length === 0) {
+    if (nationalHolidays.length === 0) {
       fetchOfficialIndianHolidays();
     }
   }, [isExpanded, nationalHolidays.length, fetchOfficialIndianHolidays]);

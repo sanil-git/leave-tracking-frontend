@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Trash2, Calendar, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, Calendar, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import NationalHolidays from './NationalHolidays';
 
 const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token }) => {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [isHolidaysExpanded, setIsHolidaysExpanded] = useState(false);
+  const [deletingHolidays, setDeletingHolidays] = useState(new Set());
 
   // Optimize duplicate filtering and sorting with useMemo
   const uniqueSortedHolidays = useMemo(() => {
@@ -142,11 +143,27 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_U
                     </div>
                     
                     <button
-                      onClick={() => onDeleteHoliday(holiday._id)}
-                      className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                      onClick={async () => {
+                        setDeletingHolidays(prev => new Set(prev).add(holiday._id));
+                        try {
+                          await onDeleteHoliday(holiday._id);
+                        } finally {
+                          setDeletingHolidays(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(holiday._id);
+                            return newSet;
+                          });
+                        }
+                      }}
+                      disabled={deletingHolidays.has(holiday._id)}
+                      className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Delete holiday"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      {deletingHolidays.has(holiday._id) ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
                     </button>
                   </div>
                 ))}

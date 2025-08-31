@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, memo } from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
@@ -16,27 +16,23 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
+const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
   const [view, setView] = useState('month');
-  const [date, setDate] = useState(currentDate || new Date());
+  // Use currentDate from parent, fallback to current date if not provided
+  const date = currentDate || new Date();
 
-  // Update internal date when currentDate prop changes
-  useEffect(() => {
-    if (currentDate && currentDate.getTime() !== date.getTime()) {
-      setDate(currentDate);
-    }
-  }, [currentDate, date]);
 
-  // Combine holidays and vacations into calendar events
+
+  // Combine holidays and vacations into calendar events - optimized to prevent unnecessary re-renders
   const events = useMemo(() => {
     const calendarEvents = [];
     
-    // Add holidays
+    // Add holidays - only process if holidays array actually changed
     if (holidays && Array.isArray(holidays)) {
       holidays.forEach(holiday => {
         if (holiday.date) {
           calendarEvents.push({
-            id: `holiday-${holiday._id || Math.random()}`,
+            id: `holiday-${holiday._id || holiday.name}-${holiday.date}`,
             title: holiday.name,
             start: new Date(holiday.date),
             end: new Date(holiday.date),
@@ -48,12 +44,12 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
       });
     }
     
-    // Add vacations
+    // Add vacations - only process if vacations array actually changed
     if (vacations && Array.isArray(vacations)) {
       vacations.forEach(vacation => {
         if (vacation.startDate && vacation.endDate) {
           calendarEvents.push({
-            id: `vacation-${vacation._id || Math.random()}`,
+            id: `vacation-${vacation._id || vacation.name}-${vacation.startDate}`,
             title: vacation.name,
             start: new Date(vacation.startDate),
             end: new Date(vacation.endDate),
@@ -66,9 +62,10 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
     }
     
     return calendarEvents;
-  }, [holidays, vacations]);
+  }, [holidays?.length, vacations?.length]); // Use length instead of full arrays for stability
 
-  const eventStyleGetter = (event) => {
+  // Memoized event style getter to prevent recreation on every render
+  const eventStyleGetter = useCallback((event) => {
     let style = {
       backgroundColor: '#3B82F6', // Blue for holidays
       borderRadius: '6px',
@@ -87,36 +84,31 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
     }
     
     return { style };
-  };
+  }, []);
 
-  // Handle navigation
-  const handleNavigate = (newDate, view, action) => {
-    console.log('Navigation called:', action, newDate, view);
-    console.log('Current date before:', date);
-    setDate(newDate);
-    console.log('New date set to:', newDate);
+  // Handle navigation - memoized to prevent recreation
+  const handleNavigate = useCallback((newDate, view, action) => {
     if (onNavigate) {
       onNavigate(action, newDate);
     }
-  };
+  }, [onNavigate]);
 
-  // Handle view change
-  const handleViewChange = (newView) => {
-    console.log('View change called:', newView);
-    console.log('Current view before:', view);
+  // Handle view change - memoized to prevent recreation
+  const handleViewChange = useCallback((newView) => {
     setView(newView);
-    console.log('New view set to:', newView);
     if (onViewChange) {
       onViewChange(newView);
     }
-  };
+  }, [onViewChange]);
 
 
 
-  // Debug logging - only log when values actually change
+  // Debug logging - only log when view or date changes (development only)
   useEffect(() => {
-    console.log('Calendar render:', { view, date, eventsCount: events.length });
-  }, [view, date, events.length]);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Calendar render:', { view, date, eventsCount: events.length });
+    }
+  }, [view, date]); // Removed events.length dependency
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '700px' }}>
@@ -137,11 +129,7 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => {
-                  console.log('Previous button clicked!');
                   const newDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-                  console.log('New date calculated:', newDate);
-                  setDate(newDate);
-                  console.log('Date state updated');
                   handleNavigate(newDate, view, 'PREV');
                 }}
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
@@ -152,11 +140,7 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
               
               <button
                 onClick={() => {
-                  console.log('Today button clicked!');
                   const today = new Date();
-                  console.log('Today date:', today);
-                  setDate(today);
-                  console.log('Date state updated to today');
                   handleNavigate(today, view, 'TODAY');
                 }}
                 className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md transform hover:scale-105"
@@ -167,11 +151,7 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
               
               <button
                 onClick={() => {
-                  console.log('Next button clicked!');
                   const newDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-                  console.log('New date calculated:', newDate);
-                  setDate(newDate);
-                  console.log('Date state updated');
                   handleNavigate(newDate, view, 'NEXT');
                 }}
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
@@ -230,6 +210,6 @@ const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }
       />
     </div>
   );
-};
+});
 
 export default Calendar;
