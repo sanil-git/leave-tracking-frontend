@@ -230,8 +230,6 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
       />
     </div>
   );
-};
-
 });
 
 export default Calendar;
