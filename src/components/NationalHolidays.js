@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, Flag, RefreshCw, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Plus, Flag, RefreshCw, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays }) => {
   const [nationalHolidays, setNationalHolidays] = useState([]);
@@ -18,7 +18,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     );
   });
 
-  const fetchOfficialIndianHolidays = async () => {
+  const fetchOfficialIndianHolidays = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -45,7 +45,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedYear, API_BASE_URL, token]);
 
   const handleAddHoliday = (holiday) => {
     const holidayData = {
@@ -72,7 +72,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     if (isExpanded) {
       fetchOfficialIndianHolidays();
     }
-  }, [selectedYear, API_BASE_URL, token, isExpanded]);
+  }, [isExpanded, fetchOfficialIndianHolidays]);
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-200">

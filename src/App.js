@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -20,99 +20,109 @@ function App() {
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
 
-  const fetchOfficialHolidays = useCallback(async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/holidays`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+  // Create stable fetch functions using useRef to prevent recreation
+  const fetchFunctionsRef = useRef();
+  
+  if (!fetchFunctionsRef.current) {
+    fetchFunctionsRef.current = {
+      fetchOfficialHolidays: async () => {
+        try {
+          const response = await fetch(`${API_BASE_URL}/holidays`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setOfficialHolidays(data);
+          }
+        } catch (error) {
+          console.error('Error fetching holidays:', error);
         }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setOfficialHolidays(data);
+      },
+      
+      fetchVacations: async () => {
+        try {
+          console.log('Fetching vacations from:', `${API_BASE_URL}/vacations`);
+          const response = await fetch(`${API_BASE_URL}/vacations`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Vacations fetched successfully:', data);
+            setVacations(data);
+          } else {
+            console.error('Failed to fetch vacations:', response.status, response.statusText);
+          }
+        } catch (error) {
+          console.error('Error fetching vacations:', error);
+        }
+      },
+      
+      fetchLeaveBalances: async () => {
+        try {
+          console.log('Token value:', token);
+          console.log('Token type:', typeof token);
+          console.log('Fetching leave balances from:', `${API_BASE_URL}/leave-balances`);
+          
+          if (!token) {
+            console.error('No token available for leave balances request');
+            return;
+          }
+          
+          const response = await fetch(`${API_BASE_URL}/leave-balances`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          console.log('Leave balances response status:', response.status);
+          console.log('Leave balances response headers:', response.headers);
+          
+          if (response.ok) {
+            const data = await response.json();
+            console.log('Leave balances raw data:', data);
+            console.log('Leave balances data type:', typeof data);
+            console.log('Leave balances data keys:', Object.keys(data || {}));
+            
+            // Handle different possible data formats
+            let processedData = data;
+            if (Array.isArray(data)) {
+              // If it's an array, convert to object format
+              processedData = data.reduce((acc, item) => {
+                acc[item.leaveType] = item.balance;
+                return acc;
+              }, {});
+            } else if (data && typeof data === 'object') {
+              // If it's already an object, use as is
+              processedData = data;
+            } else {
+              // No valid data found
+              processedData = {};
+            }
+            
+            console.log('Processed leave balances:', processedData);
+            setLeaveBalances(processedData);
+          } else {
+            const errorText = await response.text();
+            console.error('Failed to fetch leave balances:', response.status, response.statusText);
+            console.error('Error response body:', errorText);
+            // Keep default values if API fails
+            console.log('Using default leave balances');
+          }
+        } catch (error) {
+          console.error('Error fetching leave balances:', error);
+          // Keep default values if API fails
+          console.log('Using default leave balances');
+        }
       }
-    } catch (error) {
-      console.error('Error fetching holidays:', error);
-    }
-  }, [token, API_BASE_URL]);
+    };
+  }
 
-  const fetchVacations = useCallback(async () => {
-    try {
-      console.log('Fetching vacations from:', `${API_BASE_URL}/vacations`);
-      const response = await fetch(`${API_BASE_URL}/vacations`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Vacations fetched successfully:', data);
-        setVacations(data);
-      } else {
-        console.error('Failed to fetch vacations:', response.status, response.statusText);
-      }
-    } catch (error) {
-      console.error('Error fetching vacations:', error);
-    }
-  }, [token, API_BASE_URL]);
-
-  const fetchLeaveBalances = useCallback(async () => {
-    try {
-      console.log('Token value:', token);
-      console.log('Token type:', typeof token);
-      console.log('Fetching leave balances from:', `${API_BASE_URL}/leave-balances`);
-      
-      if (!token) {
-        console.error('No token available for leave balances request');
-        return;
-      }
-      
-      const response = await fetch(`${API_BASE_URL}/leave-balances`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      console.log('Leave balances response status:', response.status);
-      console.log('Leave balances response headers:', response.headers);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Leave balances raw data:', data);
-        console.log('Leave balances data type:', typeof data);
-        console.log('Leave balances data keys:', Object.keys(data || {}));
-        
-        // Handle different possible data formats
-        let processedData = data;
-        if (Array.isArray(data)) {
-          // If it's an array, convert to object format
-          processedData = data.reduce((acc, item) => {
-            acc[item.leaveType] = item.balance;
-            return acc;
-          }, {});
-        } else if (data && typeof data === 'object') {
-          // If it's already an object, use as is
-          processedData = data;
-        } else {
-          // No valid data found
-          processedData = {};
-        }
-        
-        console.log('Processed leave balances:', processedData);
-        setLeaveBalances(processedData);
-      } else {
-        const errorText = await response.text();
-        console.error('Failed to fetch leave balances:', response.status, response.statusText);
-        console.error('Error response body:', errorText);
-        // Keep default values if API fails
-        console.log('Using default leave balances');
-      }
-    } catch (error) {
-      console.error('Error fetching leave balances:', error);
-      // Keep default values if API fails
-      console.log('Using default leave balances');
-    }
-  }, [token, API_BASE_URL]);
+  // Destructure the stable functions
+  const { fetchOfficialHolidays, fetchVacations, fetchLeaveBalances } = fetchFunctionsRef.current;
 
   useEffect(() => {
     if (user && token) {
