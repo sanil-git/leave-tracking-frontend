@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Plus, Trash2, Calendar, ChevronDown, ChevronRight } from 'lucide-react';
 import NationalHolidays from './NationalHolidays';
 
@@ -6,6 +6,26 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_U
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [isHolidaysExpanded, setIsHolidaysExpanded] = useState(false);
+
+  // Optimize duplicate filtering and sorting with useMemo
+  const uniqueSortedHolidays = useMemo(() => {
+    if (!Array.isArray(holidays)) return [];
+    
+    // Remove duplicates based on name and date
+    const uniqueHolidays = [];
+    const seen = new Set();
+    
+    holidays.forEach(holiday => {
+      const key = `${holiday.name}-${holiday.date}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueHolidays.push(holiday);
+      }
+    });
+    
+    // Sort by date (earliest first)
+    return uniqueHolidays.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [holidays]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,20 +47,20 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_U
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-        <Calendar className="w-5 h-5 mr-2 text-blue-600" />
-        Holiday Management
-      </h3>
-      
-      {/* Official Indian Holidays Section */}
-      <div className="mb-4">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+          Holiday Management
+        </div>
+        
+        {/* Official Indian Holidays Tab - Inline */}
         <NationalHolidays 
           onAddHoliday={onAddHoliday}
           API_BASE_URL={API_BASE_URL}
           token={token}
           existingHolidays={holidays}
         />
-      </div>
+      </h3>
       
       {/* Add Holiday Form */}
       <form onSubmit={handleSubmit} className="mb-6">
@@ -95,7 +115,7 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_U
         >
           <div className="flex items-center space-x-3">
             <h4 className="text-md font-medium text-gray-900">Current Holidays</h4>
-            <span className="text-sm text-gray-500">({holidays.length} total)</span>
+            <span className="text-sm text-gray-500">({uniqueSortedHolidays.length} unique)</span>
           </div>
           {isHolidaysExpanded ? (
             <ChevronDown className="w-5 h-5 text-gray-500" />
@@ -111,7 +131,7 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_U
               <p className="text-gray-500 text-sm">No holidays added yet.</p>
             ) : (
               <div className="space-y-2 max-h-64 overflow-y-auto">
-                {holidays.map((holiday) => (
+                {uniqueSortedHolidays.map((holiday) => (
                   <div
                     key={holiday._id}
                     className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"

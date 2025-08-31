@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -21,7 +21,7 @@ function App() {
   const [calendarDate, setCalendarDate] = useState(new Date());
 
   // Simple fetch functions - no complex dependencies
-  const fetchOfficialHolidays = async () => {
+  const fetchOfficialHolidays = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/holidays`, {
         headers: {
@@ -35,11 +35,10 @@ function App() {
     } catch (error) {
       console.error('Error fetching holidays:', error);
     }
-  };
+  }, [token]);
   
-  const fetchVacations = async () => {
+  const fetchVacations = useCallback(async () => {
     try {
-      console.log('Fetching vacations from:', `${API_BASE_URL}/vacations`);
       const response = await fetch(`${API_BASE_URL}/vacations`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -47,7 +46,6 @@ function App() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Vacations fetched successfully:', data);
         setVacations(data);
       } else {
         console.error('Failed to fetch vacations:', response.status, response.statusText);
@@ -55,14 +53,10 @@ function App() {
     } catch (error) {
       console.error('Error fetching vacations:', error);
     }
-  };
+  }, [token]);
   
-  const fetchLeaveBalances = async () => {
+  const fetchLeaveBalances = useCallback(async () => {
     try {
-      console.log('Token value:', token);
-      console.log('Token type:', typeof token);
-      console.log('Fetching leave balances from:', `${API_BASE_URL}/leave-balances`);
-      
       if (!token) {
         console.error('No token available for leave balances request');
         return;
@@ -74,14 +68,8 @@ function App() {
         }
       });
       
-      console.log('Leave balances response status:', response.status);
-      console.log('Leave balances response headers:', response.headers);
-      
       if (response.ok) {
         const data = await response.json();
-        console.log('Leave balances raw data:', data);
-        console.log('Leave balances data type:', typeof data);
-        console.log('Leave balances data keys:', Object.keys(data || {}));
         
         // Handle different possible data formats
         let processedData = data;
@@ -99,23 +87,15 @@ function App() {
           processedData = {};
         }
         
-        console.log('Processed leave balances:', processedData);
         setLeaveBalances(processedData);
       } else {
-        const errorText = await response.text();
         console.error('Failed to fetch leave balances:', response.status, response.statusText);
-        console.error('Error response body:', errorText);
-        // Keep default values if API fails
-        console.log('Using default leave balances');
       }
     } catch (error) {
       console.error('Error fetching leave balances:', error);
-      // Keep default values if API fails
-      console.log('Using default leave balances');
     }
-  };
+  }, [token]);
 
-  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   useEffect(() => {
     if (user && token) {
       fetchUserProfile();
@@ -123,7 +103,7 @@ function App() {
       fetchVacations();
       fetchLeaveBalances();
     }
-  }, [user, token]); // Only depend on user and token
+  }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations, fetchLeaveBalances]);
 
   if (loading) {
     return <div>Loading...</div>;

@@ -35,12 +35,27 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to start of day
     
-    return holidays.filter(holiday => {
+    const filtered = holidays.filter(holiday => {
       const date = new Date(holiday.date);
       const dayOfWeek = date.getDay();
       // Only show Monday (1) or Friday (5) holidays that are in the future
       return (dayOfWeek === 1 || dayOfWeek === 5) && date >= today;
     });
+    
+    // Remove duplicates based on name and date
+    const uniqueHolidays = [];
+    const seen = new Set();
+    
+    filtered.forEach(holiday => {
+      const key = `${holiday.name}-${holiday.date}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueHolidays.push(holiday);
+      }
+    });
+    
+    // Sort by date (earliest first)
+    return uniqueHolidays.sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [holidays]);
 
   // Calculate total vacation days
