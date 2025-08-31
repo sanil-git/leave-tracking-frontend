@@ -10,6 +10,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
 
   const currentYear = new Date().getFullYear();
   const popupRef = useRef(null);
+  const tabButtonRef = useRef(null);
 
   // Filter out holidays that are already in the user's list - use useMemo to prevent recalculation on every render
   const availableHolidays = useMemo(() => {
@@ -132,7 +133,12 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
   // Handle click outside to close popup - close when clicking anywhere on the webpage
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Close popup when clicking anywhere outside the popup OR when clicking the tab button again
+      // Don't close if clicking on the tab button itself (let onClick handle that)
+      if (tabButtonRef.current && tabButtonRef.current.contains(event.target)) {
+        return;
+      }
+      
+      // Close popup when clicking anywhere outside the popup
       if (isExpanded && (!popupRef.current || !popupRef.current.contains(event.target))) {
         setIsExpanded(false);
       }
@@ -151,6 +157,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     <div className="relative bg-white rounded-lg shadow border border-gray-200">
       {/* Modern, Clean Tab Design */}
       <button
+        ref={tabButtonRef}
         onClick={() => setIsExpanded(!isExpanded)}
         className={`px-4 py-2.5 flex items-center space-x-2.5 transition-all duration-300 rounded-lg border-2 font-medium text-sm ${
           isExpanded 
