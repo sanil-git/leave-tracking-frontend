@@ -54,7 +54,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching vacations:', error);
     }
-  }, [token, API_BASE_URL]);
+  }, [token]);
 
   const fetchLeaveBalances = useCallback(async () => {
     try {
@@ -112,7 +112,7 @@ function App() {
       // Keep default values if API fails
       console.log('Using default leave balances');
     }
-  }, [token, API_BASE_URL]);
+  }, [token]);
 
   useEffect(() => {
     if (user && token) {
