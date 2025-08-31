@@ -96,6 +96,75 @@ function App() {
     }
   }, [token]);
 
+  // Memoized holiday operation functions
+  const handleAddHoliday = useCallback(async (holidayData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/holidays`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(holidayData)
+      });
+      if (response.ok) {
+        const newHoliday = await response.json();
+        // Update local state immediately instead of refetching
+        setOfficialHolidays(prev => [...prev, newHoliday]);
+      } else {
+        // If add fails, refresh to sync state
+        console.error('Failed to add holiday, refreshing list...');
+        fetchOfficialHolidays();
+      }
+    } catch (error) {
+      console.error('Error adding holiday:', error);
+      // On error, refresh to sync state
+      fetchOfficialHolidays();
+    }
+  }, [token, fetchOfficialHolidays]);
+
+  const handleDeleteHoliday = useCallback(async (holidayId) => {
+    try {
+      // Optimistic update - remove from UI immediately
+      setOfficialHolidays(prev => {
+        const index = prev.findIndex(holiday => holiday._id === holidayId);
+        if (index === -1) return prev; // Holiday not found
+        
+        // Create new array without the deleted holiday
+        const newHolidays = [...prev];
+        newHolidays.splice(index, 1);
+        return newHolidays;
+      });
+      
+      // Then make the API call
+      const response = await fetch(`${API_BASE_URL}/holidays/${holidayId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          // Holiday not found in database - refresh the list to sync
+          console.warn('Holiday not found in database, refreshing list...');
+          fetchOfficialHolidays();
+        } else {
+          // Other error - revert the optimistic update
+          console.error('Failed to delete holiday from server');
+          fetchOfficialHolidays(); // Refresh to sync state
+        }
+      }
+      
+      return response.ok; // Return success status
+    } catch (error) {
+      console.error('Error deleting holiday:', error);
+      // Revert optimistic update on error by refreshing
+      fetchOfficialHolidays();
+      throw error; // Re-throw to be caught by the calling component
+    }
+  }, [token, fetchOfficialHolidays]);
+
   useEffect(() => {
     if (user && token) {
       fetchUserProfile();
@@ -218,72 +287,8 @@ function App() {
                 holidays={officialHolidays}
                 API_BASE_URL={API_BASE_URL}
                 token={token}
-                onAddHoliday={async (holidayData) => {
-                  try {
-                    const response = await fetch(`${API_BASE_URL}/holidays`, {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                      },
-                      body: JSON.stringify(holidayData)
-                    });
-                    if (response.ok) {
-                      const newHoliday = await response.json();
-                      // Update local state immediately instead of refetching
-                      setOfficialHolidays(prev => [...prev, newHoliday]);
-                    } else {
-                      // If add fails, refresh to sync state
-                      console.error('Failed to add holiday, refreshing list...');
-                      fetchOfficialHolidays();
-                    }
-                  } catch (error) {
-                    console.error('Error adding holiday:', error);
-                    // On error, refresh to sync state
-                    fetchOfficialHolidays();
-                  }
-                }}
-                onDeleteHoliday={async (holidayId) => {
-                  try {
-                    // Optimistic update - remove from UI immediately
-                    setOfficialHolidays(prev => {
-                      const index = prev.findIndex(holiday => holiday._id === holidayId);
-                      if (index === -1) return prev; // Holiday not found
-                      
-                      // Create new array without the deleted holiday
-                      const newHolidays = [...prev];
-                      newHolidays.splice(index, 1);
-                      return newHolidays;
-                    });
-                    
-                    // Then make the API call
-                    const response = await fetch(`${API_BASE_URL}/holidays/${holidayId}`, {
-                      method: 'DELETE',
-                      headers: {
-                        'Authorization': `Bearer ${token}`
-                      }
-                    });
-                    
-                    if (!response.ok) {
-                      if (response.status === 404) {
-                        // Holiday not found in database - refresh the list to sync
-                        console.warn('Holiday not found in database, refreshing list...');
-                        fetchOfficialHolidays();
-                      } else {
-                        // Other error - revert the optimistic update
-                        console.error('Failed to delete holiday from server');
-                        fetchOfficialHolidays(); // Refresh to sync state
-                      }
-                    }
-                    
-                    return response.ok; // Return success status
-                  } catch (error) {
-                    console.error('Error deleting holiday:', error);
-                    // Revert optimistic update on error by refreshing
-                    fetchOfficialHolidays();
-                    throw error; // Re-throw to be caught by the calling component
-                  }
-                }}
+                onAddHoliday={handleAddHoliday}
+                onDeleteHoliday={handleDeleteHoliday}
               />
 
               {/* Vacation Form Section */}

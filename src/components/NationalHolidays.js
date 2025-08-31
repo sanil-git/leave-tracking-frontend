@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { Plus, Flag, RefreshCw, AlertCircle } from 'lucide-react';
 
-const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays = [] }) => {
+const NationalHolidays = memo(({ onAddHoliday, API_BASE_URL, token, existingHolidays = [] }) => {
   const [nationalHolidays, setNationalHolidays] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -123,6 +123,43 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     });
   }, []);
 
+  // Compact date formatting for holiday tabs (e.g., "Fri 14th Mar")
+  const formatCompactDate = useCallback((dateString) => {
+    // Handle different date formats from Calendarific API
+    let date;
+    if (typeof dateString === 'object' && dateString.iso) {
+      // Calendarific returns { iso: "2025-01-26" }
+      date = new Date(dateString.iso);
+    } else if (typeof dateString === 'string') {
+      // Direct string format
+      date = new Date(dateString);
+    } else {
+      return 'Invalid Date';
+    }
+    
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+    
+    // Get day of week (3 letters), day with ordinal, month (3 letters)
+    const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const day = date.getDate();
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    
+    // Add ordinal suffix to day
+    const ordinalSuffix = (day) => {
+      if (day > 3 && day < 21) return 'th';
+      switch (day % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    };
+    
+    return `${dayOfWeek} ${day}${ordinalSuffix(day)} ${month}`;
+  }, []);
+
   // Fetch holidays when component mounts or when expanded (if not already loaded)
   useEffect(() => {
     if (nationalHolidays.length === 0) {
@@ -239,13 +276,13 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
                       <button
                         key={`${holiday.name}-${holiday.date}`}
                         onClick={() => handleAddHoliday(holiday)}
-                        className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200 hover:from-orange-100 hover:to-amber-100 hover:border-orange-300 transition-all duration-200 hover:shadow-sm"
+                        className="flex items-center justify-between p-2.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200 hover:from-orange-100 hover:to-amber-100 hover:border-orange-300 transition-all duration-200 hover:shadow-sm"
                       >
                         <div className="flex-1 min-w-0 text-left">
-                          <span className="text-sm font-medium text-gray-900 truncate block">{holiday.name}</span>
-                          <span className="text-xs text-gray-600 block">{formatDate(holiday.date)}</span>
+                          <span className="text-xs font-medium text-gray-900 truncate block leading-tight">{holiday.name}</span>
+                          <span className="text-xs text-gray-600 block leading-tight">{formatCompactDate(holiday.date)}</span>
                         </div>
-                        <Plus className="w-4 h-4 text-orange-600 ml-2" />
+                        <Plus className="w-3 h-3 text-orange-600 ml-2" />
                       </button>
                     ))}
                   </div>
@@ -279,6 +316,6 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
       )}
     </div>
   );
-};
+});
 
 export default NationalHolidays;

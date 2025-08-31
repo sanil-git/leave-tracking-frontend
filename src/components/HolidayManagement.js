@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { Plus, Trash2, Calendar, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import NationalHolidays from './NationalHolidays';
 
-const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token }) => {
+const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token }) => {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [isHolidaysExpanded, setIsHolidaysExpanded] = useState(false);
@@ -174,6 +174,6 @@ const HolidayManagement = ({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_U
       </div>
     </div>
   );
-};
+});
 
 export default HolidayManagement;
