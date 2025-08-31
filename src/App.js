@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -9,6 +9,9 @@ import VacationPlanner from './components/VacationPlanner';
 import './App.css';
 // import './calendar-tailwind.css'; // Temporarily disabled to fix CSS conflicts
 
+// Move API_BASE_URL outside component to avoid dependency issues
+const API_BASE_URL = 'https://leave-tracking-backend.onrender.com';
+
 function App() {
   const { user, token, loading, logout, fetchUserProfile } = useAuth();
   const [officialHolidays, setOfficialHolidays] = useState([]);
@@ -16,8 +19,6 @@ function App() {
   const [leaveBalances, setLeaveBalances] = useState({});
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
-  
-  const API_BASE_URL = useMemo(() => 'https://leave-tracking-backend.onrender.com', []);
 
   const fetchOfficialHolidays = useCallback(async () => {
     try {
@@ -120,7 +121,7 @@ function App() {
       fetchVacations();
       fetchLeaveBalances();
     }
-  }, [user, token]); // Only depend on user and token, not the fetch functions
+  }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations, fetchLeaveBalances]);
 
   if (loading) {
     return <div>Loading...</div>;
