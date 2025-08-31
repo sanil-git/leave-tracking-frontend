@@ -129,10 +129,11 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     }
   }, [isExpanded, nationalHolidays.length, fetchOfficialIndianHolidays]);
 
-  // Handle click outside to close popup
+  // Handle click outside to close popup - close when clicking anywhere on the webpage
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target)) {
+      // Close popup when clicking anywhere outside the popup OR when clicking the tab button again
+      if (isExpanded && (!popupRef.current || !popupRef.current.contains(event.target))) {
         setIsExpanded(false);
       }
     };
@@ -148,25 +149,31 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
 
   return (
     <div className="relative bg-white rounded-lg shadow border border-gray-200">
-      {/* Compact Header - Always Visible */}
+      {/* Modern, Clean Tab Design */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="px-3 py-2 flex items-center space-x-2 bg-gradient-to-r from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100 transition-all duration-300 rounded-xl border border-orange-200/50 shadow-sm hover:shadow-md text-xs font-medium"
+        className={`px-4 py-2.5 flex items-center space-x-2.5 transition-all duration-300 rounded-lg border-2 font-medium text-sm ${
+          isExpanded 
+            ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200' 
+            : 'bg-white border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 hover:shadow-md'
+        }`}
       >
-        <span className="text-sm">🇮🇳</span>
-        <span className="text-orange-700">Official Indian Holidays</span>
-        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isExpanded ? 'bg-orange-500' : 'bg-orange-300'}`}></div>
+        <span className="text-base">🇮🇳</span>
+        <span>Official Indian Holidays</span>
+        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+          isExpanded ? 'bg-white' : 'bg-orange-400'
+        }`}></div>
       </button>
 
       {/* Expandable Content */}
       {isExpanded && (
-        <div ref={popupRef} className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-100 p-4 space-y-4 z-10">
-          <div className="text-center">
-            <div className="text-xs text-gray-400 mb-2">
-              {loading ? 'Loading holidays...' : `${availableHolidays.length} holidays available for ${currentYear}`}
+        <div ref={popupRef} className="absolute top-full right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 space-y-4 z-20">
+          <div className="text-center border-b border-gray-100 pb-3">
+            <div className="text-sm font-medium text-gray-900 mb-1">
+              {loading ? 'Loading holidays...' : `${availableHolidays.length} holidays available`}
             </div>
-            <div className="text-xs text-gray-400 mb-3">
-              📅 Sorted by date (earliest first)
+            <div className="text-xs text-gray-500">
+              📅 Sorted by date (earliest first) • {currentYear}
             </div>
           </div>
 
@@ -225,13 +232,13 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
                       <button
                         key={`${holiday.name}-${holiday.date}`}
                         onClick={() => handleAddHoliday(holiday)}
-                        className="flex items-center justify-between p-2 bg-orange-50 rounded border border-orange-200 hover:bg-orange-100 transition-colors duration-200"
+                        className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg border border-orange-200 hover:from-orange-100 hover:to-amber-100 hover:border-orange-300 transition-all duration-200 hover:shadow-sm"
                       >
                         <div className="flex-1 min-w-0 text-left">
-                          <span className="text-xs font-medium text-gray-900 truncate block">{holiday.name}</span>
+                          <span className="text-sm font-medium text-gray-900 truncate block">{holiday.name}</span>
                           <span className="text-xs text-gray-600 block">{formatDate(holiday.date)}</span>
                         </div>
-                        <Plus className="w-3 h-3 text-orange-600 ml-1" />
+                        <Plus className="w-4 h-4 text-orange-600 ml-2" />
                       </button>
                     ))}
                   </div>
@@ -251,14 +258,14 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
           </div>
 
           {/* Refresh Button */}
-          <div className="flex justify-center">
+          <div className="flex justify-center pt-2">
             <button
               onClick={fetchOfficialIndianHolidays}
               disabled={loading}
-              className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-200"
+              className="flex items-center space-x-2 px-4 py-2.5 text-sm font-medium text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-all duration-200 border border-orange-200 hover:border-orange-300"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              <span>Refresh</span>
+              <span>Refresh Holidays</span>
             </button>
           </div>
         </div>
