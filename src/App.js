@@ -17,7 +17,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
   
-  const API_BASE_URL = 'https://leave-tracking-backend.onrender.com';
+  const API_BASE_URL = useMemo(() => 'https://leave-tracking-backend.onrender.com', []);
 
   const fetchOfficialHolidays = useCallback(async () => {
     try {
