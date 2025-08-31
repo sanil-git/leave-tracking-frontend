@@ -62,7 +62,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
     }
     
     return calendarEvents;
-  }, [holidays?.length, vacations?.length]); // Use length instead of full arrays for stability
+  }, [holidays, vacations]); // Include full arrays as dependencies
 
   // Memoized event style getter to prevent recreation on every render
   const eventStyleGetter = useCallback((event) => {
@@ -108,7 +108,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
     if (process.env.NODE_ENV === 'development') {
       console.log('Calendar render:', { view, date, eventsCount: events.length });
     }
-  }, [view, date]); // Removed events.length dependency
+  }, [view, date, events.length]); // Include events.length dependency
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '700px' }}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Plus, Flag, RefreshCw, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { Plus, Flag, RefreshCw, AlertCircle } from 'lucide-react';
 
 const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays = [] }) => {
   const [nationalHolidays, setNationalHolidays] = useState([]);
@@ -7,7 +7,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
   const [error, setError] = useState(null);
 
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
   const currentYear = new Date().getFullYear();
   const popupRef = useRef(null);
 
@@ -69,7 +69,7 @@ const NationalHolidays = ({ onAddHoliday, API_BASE_URL, token, existingHolidays 
     } finally {
       setLoading(false);
     }
-  }, [API_BASE_URL, token]);
+  }, [API_BASE_URL, token, currentYear]);
 
   const handleAddHoliday = (holiday) => {
     // Extract the actual date string from the holiday object
