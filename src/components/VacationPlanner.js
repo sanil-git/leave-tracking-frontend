@@ -99,7 +99,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={leaveBalances?.EL || ''}
+                value={leaveBalances?.EL || 0}
                 onChange={(e) => {
                   const value = e.target.value;
                   setLeaveBalances(prev => ({ 
@@ -109,7 +109,6 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                 }}
                 className="w-full text-2xl font-bold text-blue-600 bg-transparent border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 text-center"
                 min="0"
-                placeholder="0"
               />
             ) : (
               <div className="text-2xl font-bold text-blue-600">
@@ -123,7 +122,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={leaveBalances?.SL || ''}
+                value={leaveBalances?.SL || 0}
                 onChange={(e) => {
                   const value = e.target.value;
                   setLeaveBalances(prev => ({ 
@@ -133,7 +132,6 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                 }}
                 className="w-full text-2xl font-bold text-green-600 bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-green-500 text-center"
                 min="0"
-                placeholder="0"
               />
             ) : (
               <div className="text-2xl font-bold text-green-600">
@@ -147,7 +145,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={leaveBalances?.CL || ''}
+                value={leaveBalances?.CL || 0}
                 onChange={(e) => {
                   const value = e.target.value;
                   setLeaveBalances(prev => ({ 
@@ -157,7 +155,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                 }}
                 className="w-full text-2xl font-bold text-yellow-600 bg-transparent border-b-2 border-yellow-300 focus:outline-none focus:border-yellow-500 text-center"
                 min="0"
-                placeholder="0"
+
               />
             ) : (
               <div className="text-2xl font-bold text-yellow-600">
