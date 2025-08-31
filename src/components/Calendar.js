@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, memo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
@@ -16,7 +16,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
+const Calendar = ({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
   const [view, setView] = useState('month');
   const [date, setDate] = useState(currentDate || new Date());
 
@@ -230,6 +230,6 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
       />
     </div>
   );
-});
+};
 
 export default Calendar;
