@@ -4,6 +4,7 @@ import { Calendar, Plane, TrendingUp, Clock, MapPin } from 'lucide-react';
 const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalances, onUpdateLeaveBalances, onNavigateToDate }) => {
   const [leaveBalances, setLeaveBalances] = useState(initialLeaveBalances || { EL: 30, SL: 6, CL: 3 });
   const [isEditingBalances, setIsEditingBalances] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Update local state when prop changes
   useEffect(() => {
@@ -13,21 +14,15 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
   }, [initialLeaveBalances, isEditingBalances]);
 
   const handleSaveBalances = async () => {
-    console.log('handleSaveBalances called with:', leaveBalances);
-    console.log('onUpdateLeaveBalances function exists:', !!onUpdateLeaveBalances);
-    
-    if (onUpdateLeaveBalances) {
-      try {
-        console.log('Calling onUpdateLeaveBalances...');
-        await onUpdateLeaveBalances(leaveBalances);
-        console.log('onUpdateLeaveBalances completed successfully');
-        setIsEditingBalances(false);
-      } catch (error) {
-        console.error('Failed to update leave balances:', error);
-      }
-    } else {
-      console.log('No onUpdateLeaveBalances function provided');
+    if (!onUpdateLeaveBalances || isSaving) return;
+    setIsSaving(true);
+    try {
+      await onUpdateLeaveBalances(leaveBalances);
       setIsEditingBalances(false);
+    } catch (error) {
+      // keep editing state to let user retry
+    } finally {
+      setIsSaving(false);
     }
   };
   // Find long weekend opportunities (holidays on Monday/Friday) - only future dates
@@ -99,13 +94,15 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             Leave Balance
           </div>
           <button
-            onClick={isEditingBalances ? handleSaveBalances : () => {
-              console.log('Edit button clicked, setting isEditingBalances to true');
-              setIsEditingBalances(true);
-            }}
-            className="text-sm px-3 py-1 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors duration-200"
+            onClick={isEditingBalances ? handleSaveBalances : () => setIsEditingBalances(true)}
+            disabled={isSaving}
+            className={`text-sm px-3 py-1 rounded-lg transition-colors duration-200 ${
+              isSaving
+                ? 'bg-purple-100 text-purple-400 cursor-not-allowed'
+                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+            }`}
           >
-            {isEditingBalances ? 'Save' : 'Edit'}
+            {isEditingBalances ? (isSaving ? 'Saving…' : 'Save') : 'Edit'}
           </button>
         </h3>
         
@@ -122,7 +119,8 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                     EL: value === '' ? 0 : parseInt(value) || 0 
                   }));
                 }}
-                className="w-full text-2xl font-bold text-blue-600 bg-transparent border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 text-center"
+                disabled={isSaving}
+                className="w-full text-2xl font-bold text-blue-600 bg-transparent border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 text-center disabled:opacity-60"
                 min="0"
               />
             ) : (
@@ -145,7 +143,8 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                     SL: value === '' ? 0 : parseInt(value) || 0 
                   }));
                 }}
-                className="w-full text-2xl font-bold text-green-600 bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-green-500 text-center"
+                disabled={isSaving}
+                className="w-full text-2xl font-bold text-green-600 bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-green-500 text-center disabled:opacity-60"
                 min="0"
               />
             ) : (
@@ -168,7 +167,8 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                     CL: value === '' ? 0 : parseInt(value) || 0 
                   }));
                 }}
-                className="w-full text-2xl font-bold text-yellow-600 bg-transparent border-b-2 border-yellow-300 focus:outline-none focus:border-yellow-500 text-center"
+                disabled={isSaving}
+                className="w-full text-2xl font-bold text-yellow-600 bg-transparent border-b-2 border-yellow-300 focus:outline-none focus:border-yellow-500 text-center disabled:opacity-60"
                 min="0"
 
               />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useTransition } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -19,6 +19,7 @@ function App() {
   const [leaveBalances, setLeaveBalances] = useState({});
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
+  const [isHolidayUpdatePending, startHolidayTransition] = useTransition();
 
   // Simple fetch functions - no complex dependencies
   const fetchOfficialHolidays = useCallback(async () => {
@@ -109,8 +110,10 @@ function App() {
       });
       if (response.ok) {
         const newHoliday = await response.json();
-        // Update local state immediately instead of refetching
-        setOfficialHolidays(prev => [...prev, newHoliday]);
+        // Update local state immediately instead of refetching (low priority)
+        startHolidayTransition(() => {
+          setOfficialHolidays(prev => [...prev, newHoliday]);
+        });
       } else {
         // If add fails, refresh to sync state
         console.error('Failed to add holiday, refreshing list...');
@@ -126,14 +129,14 @@ function App() {
   const handleDeleteHoliday = useCallback(async (holidayId) => {
     try {
       // Optimistic update - remove from UI immediately
-      setOfficialHolidays(prev => {
-        const index = prev.findIndex(holiday => holiday._id === holidayId);
-        if (index === -1) return prev; // Holiday not found
-        
-        // Create new array without the deleted holiday
-        const newHolidays = [...prev];
-        newHolidays.splice(index, 1);
-        return newHolidays;
+      startHolidayTransition(() => {
+        setOfficialHolidays(prev => {
+          const index = prev.findIndex(holiday => holiday._id === holidayId);
+          if (index === -1) return prev; // Holiday not found
+          const newHolidays = [...prev];
+          newHolidays.splice(index, 1);
+          return newHolidays;
+        });
       });
       
       // Then make the API call
@@ -164,6 +167,15 @@ function App() {
       throw error; // Re-throw to be caught by the calling component
     }
   }, [token, fetchOfficialHolidays]);
+
+  // Memoized calendar navigation handlers to avoid prop churn causing re-renders
+  const handleCalendarNavigate = useCallback((action, newDate) => {
+    setCalendarDate(newDate);
+  }, []);
+
+  const handleCalendarViewChange = useCallback((view) => {
+    // no-op placeholder to keep stable reference if needed later
+  }, []);
 
   useEffect(() => {
     if (user && token) {
@@ -227,6 +239,7 @@ function App() {
     setCalendarDate(date);
   };
 
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
@@ -263,22 +276,9 @@ function App() {
                 <Calendar
                   holidays={officialHolidays}
                   vacations={vacations}
-                  onNavigate={(action, newDate) => {
-                    if (action === 'PREV') {
-                      // Handle previous month
-                      setCalendarDate(newDate);
-                    } else if (action === 'NEXT') {
-                      // Handle next month
-                      setCalendarDate(newDate);
-                    } else if (action === 'TODAY') {
-                      // Handle today
-                      setCalendarDate(newDate);
-                    }
-                  }}
+                  onNavigate={handleCalendarNavigate}
                   currentDate={calendarDate}
-                  onViewChange={(view) => {
-                    // Handle view change
-                  }}
+                  onViewChange={handleCalendarViewChange}
                 />
               </div>
 
@@ -376,7 +376,10 @@ function App() {
                     // Update each leave balance type in the database
                     console.log('Starting database updates for leave balances...');
                     
-                    const updatePromises = Object.entries(newBalances).map(async ([type, balance]) => {
+                    // Only update changed fields to reduce API calls
+                    const updatePromises = Object.entries(newBalances).filter(([type, balance]) => {
+                      return leaveBalances[type] !== balance;
+                    }).map(async ([type, balance]) => {
                       console.log(`Updating ${type} balance to ${balance}...`);
                       
                       const response = await fetch(`${API_BASE_URL}/leave-balances/${type}`, {

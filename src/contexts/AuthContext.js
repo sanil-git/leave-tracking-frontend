@@ -22,13 +22,19 @@ export const AuthProvider = ({ children }) => {
     }
 
     try {
+      const currentToken = token; // capture token at call time to avoid race on logout
       const response = await fetch('https://leave-tracking-backend.onrender.com/auth/profile', {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${currentToken}`
         }
       });
 
       if (response.ok) {
+        // If user logged out while request was in flight, ignore this response
+        if (localStorage.getItem('token') !== currentToken) {
+          setLoading(false);
+          return;
+        }
         const userData = await response.json();
         setUser(userData);
       } else {
@@ -101,9 +107,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    // Increment a simple logout timestamp to break any in-flight profile requests
+    localStorage.setItem('logout_at', String(Date.now()));
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
+    setLoading(false);
   };
 
   const value = {

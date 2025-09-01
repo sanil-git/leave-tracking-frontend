@@ -31,11 +31,14 @@ const NationalHolidays = memo(({ onAddHoliday, API_BASE_URL, token, existingHoli
     });
     
     // Sort holidays by date (earliest first)
-    return filtered.sort((a, b) => {
+    // Sort holidays by date (earliest first)
+    filtered.sort((a, b) => {
       const dateA = typeof a.date === 'object' && a.date.iso ? a.date.iso : a.date;
       const dateB = typeof b.date === 'object' && b.date.iso ? b.date.iso : b.date;
       return new Date(dateA) - new Date(dateB);
     });
+
+    return filtered;
   }, [nationalHolidays, existingHolidays]);
 
   const fetchOfficialIndianHolidays = useCallback(async () => {
@@ -72,7 +75,7 @@ const NationalHolidays = memo(({ onAddHoliday, API_BASE_URL, token, existingHoli
     }
   }, [API_BASE_URL, token, currentYear]);
 
-  const handleAddHoliday = (holiday) => {
+  const handleAddHoliday = useCallback((holiday) => {
     // Extract the actual date string from the holiday object
     let dateString;
     if (typeof holiday.date === 'object' && holiday.date.iso) {
@@ -95,7 +98,7 @@ const NationalHolidays = memo(({ onAddHoliday, API_BASE_URL, token, existingHoli
     
     // Don't close popup - let user add multiple holidays
     // The availableHolidays will automatically update due to the useMemo dependency
-  };
+  }, [onAddHoliday]);
 
   // Memoized date formatting to prevent repeated calculations
   const formatDate = useCallback((dateString) => {

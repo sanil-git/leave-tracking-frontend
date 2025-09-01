@@ -25,7 +25,8 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
     });
     
     // Sort by date (earliest first)
-    return uniqueHolidays.sort((a, b) => new Date(a.date) - new Date(b.date));
+    uniqueHolidays.sort((a, b) => new Date(a.date) - new Date(b.date));
+    return uniqueHolidays;
   }, [holidays]);
 
   const handleSubmit = (e) => {
