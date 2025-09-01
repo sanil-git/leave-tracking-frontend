@@ -35,8 +35,10 @@ function App() {
         const data = await response.json();
         setOfficialHolidays(data);
       }
+      return response.ok; // Always return a value
     } catch (error) {
       console.error('Error fetching holidays:', error);
+      return false; // Return false on error
     }
   }, [token]);
   
@@ -53,8 +55,10 @@ function App() {
       } else {
         console.error('Failed to fetch vacations:', response.status, response.statusText);
       }
+      return response.ok; // Always return a value
     } catch (error) {
       console.error('Error fetching vacations:', error);
+      return false; // Return false on error
     }
   }, [token]);
   
@@ -62,7 +66,7 @@ function App() {
     try {
       if (!token) {
         console.error('No token available for leave balances request');
-        return;
+        return false; // Return false when no token
       }
       
       const response = await fetch(`${API_BASE_URL}/leave-balances`, {
@@ -94,8 +98,10 @@ function App() {
       } else {
         console.error('Failed to fetch leave balances:', response.status, response.statusText);
       }
+      return response.ok; // Always return a value
     } catch (error) {
       console.error('Error fetching leave balances:', error);
+      return false; // Return false on error
     }
   }, [token]);
 
@@ -194,6 +200,13 @@ function App() {
       ]).finally(() => {
         setIsDataLoading(false);
       });
+
+      // Fallback timeout to ensure loading state is cleared
+      const timeoutId = setTimeout(() => {
+        setIsDataLoading(false);
+      }, 10000); // 10 second timeout
+
+      return () => clearTimeout(timeoutId);
     }
   }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations, fetchLeaveBalances]);
 
