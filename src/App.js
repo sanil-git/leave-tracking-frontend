@@ -20,8 +20,7 @@ function App() {
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [, startHolidayTransition] = useTransition();
-  const [isDataLoading, setIsDataLoading] = useState(false);
-  const [dataLoadProgress, setDataLoadProgress] = useState({ profile: false, holidays: false, vacations: false, balances: false });
+  // Loading states temporarily disabled to fix infinite loading issue
 
   // Simple fetch functions - no complex dependencies
   const fetchOfficialHolidays = useCallback(async () => {
@@ -185,38 +184,14 @@ function App() {
     // no-op placeholder to keep stable reference if needed later
   }, []);
 
-  // Load all data in parallel for faster performance
+  // Load all data in parallel - simplified without loading states
   useEffect(() => {
     if (user && token) {
-      // Set loading state
-      setIsDataLoading(true);
-      setDataLoadProgress({ profile: false, holidays: false, vacations: false, balances: false });
-      
-      // Create a simple timeout to clear loading state
-      const loadingTimeout = setTimeout(() => {
-        setIsDataLoading(false);
-      }, 3000); // 3 second timeout
-      
-      // Run API calls
-      const loadData = async () => {
-        try {
-          await Promise.allSettled([
-            fetchUserProfile().then(() => setDataLoadProgress(prev => ({ ...prev, profile: true }))),
-            fetchOfficialHolidays().then(() => setDataLoadProgress(prev => ({ ...prev, holidays: true }))),
-            fetchVacations().then(() => setDataLoadProgress(prev => ({ ...prev, vacations: true }))),
-            fetchLeaveBalances().then(() => setDataLoadProgress(prev => ({ ...prev, balances: true })))
-          ]);
-        } catch (error) {
-          console.error('Error loading data:', error);
-        } finally {
-          clearTimeout(loadingTimeout);
-          setIsDataLoading(false);
-        }
-      };
-      
-      loadData();
-      
-      return () => clearTimeout(loadingTimeout);
+      // Simply run the API calls without loading states
+      fetchUserProfile();
+      fetchOfficialHolidays();
+      fetchVacations();
+      fetchLeaveBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, token]);
@@ -294,10 +269,8 @@ function App() {
             <div className="flex items-center space-x-4">
               {/* Backend Status Indicator */}
               <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${isDataLoading ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'}`}></div>
-                <span className="text-sm text-gray-600">
-                  {isDataLoading ? 'Loading Data...' : 'Backend'}
-                </span>
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-sm text-gray-600">Backend</span>
               </div>
               <button
                 onClick={logout}
@@ -310,30 +283,7 @@ function App() {
         </div>
       </header>
 
-      {/* Data Loading Progress Bar */}
-      {isDataLoading && (
-        <div className="bg-blue-50 border-b border-blue-200">
-          <div className="max-w-7xl mx-auto px-4 py-2">
-            <div className="flex items-center justify-between text-sm text-blue-700">
-              <span>Loading your data...</span>
-              <div className="flex space-x-2">
-                <span className={`px-2 py-1 rounded ${dataLoadProgress.profile ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
-                  Profile {dataLoadProgress.profile ? '✅' : '⏳'}
-                </span>
-                <span className={`px-2 py-1 rounded ${dataLoadProgress.holidays ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
-                  Holidays {dataLoadProgress.holidays ? '✅' : '⏳'}
-                </span>
-                <span className={`px-2 py-1 rounded ${dataLoadProgress.vacations ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
-                  Vacations {dataLoadProgress.vacations ? '✅' : '⏳'}
-                </span>
-                <span className={`px-2 py-1 rounded ${dataLoadProgress.balances ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
-                  Balances {dataLoadProgress.balances ? '✅' : '⏳'}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Data Loading Progress Bar - Temporarily disabled */}
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -349,7 +299,7 @@ function App() {
                   onNavigate={handleCalendarNavigate}
                   currentDate={calendarDate}
                   onViewChange={handleCalendarViewChange}
-                  isLoading={isDataLoading}
+                  isLoading={false}
                 />
               </div>
 
@@ -360,7 +310,7 @@ function App() {
                 token={token}
                 onAddHoliday={handleAddHoliday}
                 onDeleteHoliday={handleDeleteHoliday}
-                isLoading={isDataLoading}
+                isLoading={false}
               />
 
               {/* Vacation Form Section */}
@@ -441,7 +391,7 @@ function App() {
                 vacations={vacations}
                 leaveBalances={leaveBalances}
                 onNavigateToDate={navigateToDate}
-                isLoading={isDataLoading}
+                isLoading={false}
                 onUpdateLeaveBalances={async (newBalances) => {
                   try {
                     console.log('Updating leave balances:', newBalances);
