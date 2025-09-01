@@ -23,6 +23,17 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
 
 
 
+  // Create stable keys for holidays and vacations to prevent unnecessary re-renders
+  const holidaysKey = useMemo(() => {
+    if (!holidays || !Array.isArray(holidays)) return '';
+    return holidays.map(h => `${h._id || h.name}-${h.date}`).join('|');
+  }, [holidays]);
+
+  const vacationsKey = useMemo(() => {
+    if (!vacations || !Array.isArray(vacations)) return '';
+    return vacations.map(v => `${v._id || v.name}-${v.startDate}-${v.endDate}`).join('|');
+  }, [vacations]);
+
   // Combine holidays and vacations into calendar events - optimized to prevent unnecessary re-renders
   const events = useMemo(() => {
     const calendarEvents = [];
@@ -62,7 +73,8 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
     }
     
     return calendarEvents;
-  }, [holidays, vacations]); // Include full arrays as dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holidaysKey, vacationsKey]); // Use stable keys to prevent unnecessary re-renders
 
   // Memoized event style getter to prevent recreation on every render
   const eventStyleGetter = useCallback((event) => {
@@ -106,9 +118,9 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
   // Debug logging - only log when view or date changes (development only)
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Calendar render:', { view, date, eventsCount: events.length });
+      console.log('Calendar render:', { view, date, eventsCount: events.length, holidaysKey: holidaysKey.substring(0, 50), vacationsKey: vacationsKey.substring(0, 50) });
     }
-  }, [view, date, events.length]); // Include events.length dependency
+  }, [view, date, events.length, holidaysKey, vacationsKey]); // Include stable keys dependency
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '700px' }}>
