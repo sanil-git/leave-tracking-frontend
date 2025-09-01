@@ -188,27 +188,38 @@ function App() {
   // Load all data in parallel for faster performance
   useEffect(() => {
     if (user && token) {
+      // Set loading state
       setIsDataLoading(true);
       setDataLoadProgress({ profile: false, holidays: false, vacations: false, balances: false });
       
-      // Run all API calls in parallel for maximum speed
-      Promise.allSettled([
-        fetchUserProfile().then(() => setDataLoadProgress(prev => ({ ...prev, profile: true }))),
-        fetchOfficialHolidays().then(() => setDataLoadProgress(prev => ({ ...prev, holidays: true }))),
-        fetchVacations().then(() => setDataLoadProgress(prev => ({ ...prev, vacations: true }))),
-        fetchLeaveBalances().then(() => setDataLoadProgress(prev => ({ ...prev, balances: true })))
-      ]).finally(() => {
+      // Create a simple timeout to clear loading state
+      const loadingTimeout = setTimeout(() => {
         setIsDataLoading(false);
-      });
-
-      // Fallback timeout to ensure loading state is cleared
-      const timeoutId = setTimeout(() => {
-        setIsDataLoading(false);
-      }, 10000); // 10 second timeout
-
-      return () => clearTimeout(timeoutId);
+      }, 3000); // 3 second timeout
+      
+      // Run API calls
+      const loadData = async () => {
+        try {
+          await Promise.allSettled([
+            fetchUserProfile().then(() => setDataLoadProgress(prev => ({ ...prev, profile: true }))),
+            fetchOfficialHolidays().then(() => setDataLoadProgress(prev => ({ ...prev, holidays: true }))),
+            fetchVacations().then(() => setDataLoadProgress(prev => ({ ...prev, vacations: true }))),
+            fetchLeaveBalances().then(() => setDataLoadProgress(prev => ({ ...prev, balances: true })))
+          ]);
+        } catch (error) {
+          console.error('Error loading data:', error);
+        } finally {
+          clearTimeout(loadingTimeout);
+          setIsDataLoading(false);
+        }
+      };
+      
+      loadData();
+      
+      return () => clearTimeout(loadingTimeout);
     }
-  }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations, fetchLeaveBalances]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, token]);
 
   if (loading) {
     return (
