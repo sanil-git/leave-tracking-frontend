@@ -19,7 +19,7 @@ function App() {
   const [leaveBalances, setLeaveBalances] = useState({});
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const [isHolidayUpdatePending, startHolidayTransition] = useTransition();
+  const [, startHolidayTransition] = useTransition();
 
   // Simple fetch functions - no complex dependencies
   const fetchOfficialHolidays = useCallback(async () => {
