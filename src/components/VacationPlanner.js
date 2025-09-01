@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Calendar, Plane, TrendingUp, Clock, MapPin } from 'lucide-react';
 
-const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalances, onUpdateLeaveBalances, onNavigateToDate }) => {
+const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalances, onUpdateLeaveBalances, onNavigateToDate, isLoading = false }) => {
   const [leaveBalances, setLeaveBalances] = useState(initialLeaveBalances || { EL: 30, SL: 6, CL: 3 });
   const [isEditingBalances, setIsEditingBalances] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -108,7 +108,11 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
         
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center p-3 bg-blue-50 rounded-lg">
-            {isEditingBalances ? (
+            {isLoading ? (
+              <div className="text-2xl font-bold text-blue-600">
+                <div className="animate-pulse bg-blue-200 h-8 w-16 mx-auto rounded"></div>
+              </div>
+            ) : isEditingBalances ? (
               <input
                 type="number"
                 value={leaveBalances?.EL || 0}

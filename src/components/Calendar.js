@@ -16,7 +16,7 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange }) => {
+const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange, isLoading = false }) => {
   const [view, setView] = useState('month');
   // Use currentDate from parent, fallback to current date if not provided
   const date = useMemo(() => currentDate || new Date(), [currentDate]);
@@ -181,33 +181,42 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
         </div>
       </div>
       
-      <BigCalendar
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 600 }}
-        view={view}
-        onView={handleViewChange}
-        date={date}
-        toolbar={false}
-        eventPropGetter={eventStyleGetter}
-        selectable
-        popup
-        defaultView="month"
-        views={['month', 'week', 'day']}
-        messages={{
-          next: "Next",
-          previous: "Previous",
-          today: "Today",
-          month: "Month",
-          week: "Week",
-          day: "Day",
-          noEventsInRange: "No events in this range."
-        }}
-        step={60}
-        timeslots={1}
-      />
+      {isLoading ? (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading calendar data...</p>
+          </div>
+        </div>
+      ) : (
+        <BigCalendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 600 }}
+          view={view}
+          onView={handleViewChange}
+          date={date}
+          toolbar={false}
+          eventPropGetter={eventStyleGetter}
+          selectable
+          popup
+          defaultView="month"
+          views={['month', 'week', 'day']}
+          messages={{
+            next: "Next",
+            previous: "Previous",
+            today: "Today",
+            month: "Month",
+            week: "Week",
+            day: "Day",
+            noEventsInRange: "No events in this range."
+          }}
+          step={60}
+          timeslots={1}
+        />
+      )}
     </div>
   );
 });

@@ -20,6 +20,8 @@ function App() {
   const [showLogin, setShowLogin] = useState(true);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [, startHolidayTransition] = useTransition();
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [dataLoadProgress, setDataLoadProgress] = useState({ profile: false, holidays: false, vacations: false, balances: false });
 
   // Simple fetch functions - no complex dependencies
   const fetchOfficialHolidays = useCallback(async () => {
@@ -177,17 +179,34 @@ function App() {
     // no-op placeholder to keep stable reference if needed later
   }, []);
 
+  // Load all data in parallel for faster performance
   useEffect(() => {
     if (user && token) {
-      fetchUserProfile();
-      fetchOfficialHolidays();
-      fetchVacations();
-      fetchLeaveBalances();
+      setIsDataLoading(true);
+      setDataLoadProgress({ profile: false, holidays: false, vacations: false, balances: false });
+      
+      // Run all API calls in parallel for maximum speed
+      Promise.allSettled([
+        fetchUserProfile().then(() => setDataLoadProgress(prev => ({ ...prev, profile: true }))),
+        fetchOfficialHolidays().then(() => setDataLoadProgress(prev => ({ ...prev, holidays: true }))),
+        fetchVacations().then(() => setDataLoadProgress(prev => ({ ...prev, vacations: true }))),
+        fetchLeaveBalances().then(() => setDataLoadProgress(prev => ({ ...prev, balances: true })))
+      ]).finally(() => {
+        setIsDataLoading(false);
+      });
     }
   }, [user, token, fetchUserProfile, fetchOfficialHolidays, fetchVacations, fetchLeaveBalances]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">Loading Leave Tracking App</h2>
+          <p className="text-gray-500">Please wait while we set up your account...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -251,8 +270,10 @@ function App() {
             <div className="flex items-center space-x-4">
               {/* Backend Status Indicator */}
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-600">Backend</span>
+                <div className={`w-3 h-3 rounded-full ${isDataLoading ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'}`}></div>
+                <span className="text-sm text-gray-600">
+                  {isDataLoading ? 'Loading Data...' : 'Backend'}
+                </span>
               </div>
               <button
                 onClick={logout}
@@ -264,6 +285,31 @@ function App() {
           </div>
         </div>
       </header>
+
+      {/* Data Loading Progress Bar */}
+      {isDataLoading && (
+        <div className="bg-blue-50 border-b border-blue-200">
+          <div className="max-w-7xl mx-auto px-4 py-2">
+            <div className="flex items-center justify-between text-sm text-blue-700">
+              <span>Loading your data...</span>
+              <div className="flex space-x-2">
+                <span className={`px-2 py-1 rounded ${dataLoadProgress.profile ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
+                  Profile {dataLoadProgress.profile ? '✅' : '⏳'}
+                </span>
+                <span className={`px-2 py-1 rounded ${dataLoadProgress.holidays ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
+                  Holidays {dataLoadProgress.holidays ? '✅' : '⏳'}
+                </span>
+                <span className={`px-2 py-1 rounded ${dataLoadProgress.vacations ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
+                  Vacations {dataLoadProgress.vacations ? '✅' : '⏳'}
+                </span>
+                <span className={`px-2 py-1 rounded ${dataLoadProgress.balances ? 'bg-green-200 text-green-800' : 'bg-blue-200 text-blue-800'}`}>
+                  Balances {dataLoadProgress.balances ? '✅' : '⏳'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -279,6 +325,7 @@ function App() {
                   onNavigate={handleCalendarNavigate}
                   currentDate={calendarDate}
                   onViewChange={handleCalendarViewChange}
+                  isLoading={isDataLoading}
                 />
               </div>
 
@@ -289,6 +336,7 @@ function App() {
                 token={token}
                 onAddHoliday={handleAddHoliday}
                 onDeleteHoliday={handleDeleteHoliday}
+                isLoading={isDataLoading}
               />
 
               {/* Vacation Form Section */}
@@ -369,6 +417,7 @@ function App() {
                 vacations={vacations}
                 leaveBalances={leaveBalances}
                 onNavigateToDate={navigateToDate}
+                isLoading={isDataLoading}
                 onUpdateLeaveBalances={async (newBalances) => {
                   try {
                     console.log('Updating leave balances:', newBalances);

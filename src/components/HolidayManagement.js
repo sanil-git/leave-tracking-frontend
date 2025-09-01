@@ -2,7 +2,7 @@ import React, { useState, useMemo, memo } from 'react';
 import { Plus, Trash2, Calendar, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import NationalHolidays from './NationalHolidays';
 
-const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token }) => {
+const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token, isLoading = false }) => {
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [isHolidaysExpanded, setIsHolidaysExpanded] = useState(false);
@@ -117,7 +117,9 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
         >
           <div className="flex items-center space-x-3">
             <h4 className="text-md font-medium text-gray-900">Current Holidays</h4>
-            <span className="text-sm text-gray-500">({uniqueSortedHolidays.length} unique)</span>
+            <span className="text-sm text-gray-500">
+              {isLoading ? 'Loading...' : `(${uniqueSortedHolidays.length} unique)`}
+            </span>
           </div>
           {isHolidaysExpanded ? (
             <ChevronDown className="w-5 h-5 text-gray-500" />
