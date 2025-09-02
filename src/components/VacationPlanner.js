@@ -115,7 +115,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             ) : isEditingBalances ? (
               <input
                 type="number"
-                value={parseInt(leaveBalances?.EL) || 0}
+                value={leaveBalances?.EL || 0}
                 onChange={(e) => {
                   const value = e.target.value;
                   setLeaveBalances(prev => ({ 
@@ -139,7 +139,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={parseInt(leaveBalances?.SL) || 0}
+                value={leaveBalances?.SL || 0}
                 onChange={(e) => {
                   const value = e.target.value;
                   setLeaveBalances(prev => ({ 
@@ -163,7 +163,7 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             {isEditingBalances ? (
               <input
                 type="number"
-                value={parseInt(leaveBalances?.CL) || 0}
+                value={leaveBalances?.CL || 0}
                 onChange={(e) => {
                   const value = e.target.value;
                   setLeaveBalances(prev => ({ 
