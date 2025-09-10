@@ -1,12 +1,19 @@
-# Leave Tracking App
+# PlanWise - AI-Powered Leave Planning
 
-A modern, intuitive web application for managing holidays, vacations, and leave planning with calendar integration.
+A modern, intuitive web application for smart leave management with AI-powered insights, vacation planning, and calendar integration. PlanWise helps you discover long weekends, track leave balances, and optimize your time off with intelligent recommendations.
 
 ## 🎯 Purpose
 
-Streamline leave management by providing a centralized platform to track holidays, plan vacations, and visualize time off on an interactive calendar. Perfect for individuals and teams to plan long weekends and optimize vacation time.
+PlanWise revolutionizes leave management with AI-powered insights that help you save time and money. Get smart predictions for optimal vacation timing, discover long weekend opportunities, track ticket prices, and optimize your leave strategy with AI that learns your patterns. Perfect for individuals and teams who want to maximize their time off intelligently.
 
 ## ✨ Features
+
+### 🤖 AI-Powered Intelligence
+- **Smart Vacation Timing**: AI predicts optimal vacation dates based on prices, weather, and workload
+- **Cost-Saving Insights**: Get alerts when flight prices drop for your planned destinations
+- **Long Weekend Discovery**: Automatically detect future holidays on Monday/Friday for extended time off
+- **Pattern Learning**: AI learns your leave preferences and team dynamics for better recommendations
+- **Weather Integration**: Consider weather forecasts in vacation timing suggestions
 
 ### 📅 Calendar & Holidays
 - **Interactive Calendar**: Monthly, weekly, and daily views with event display
@@ -45,13 +52,14 @@ Streamline leave management by providing a centralized platform to track holiday
 ## 🛠️ Technical Stack
 
 - **Frontend**: React.js with modern hooks (useState, useEffect, useContext, useRef)
-- **Styling**: Tailwind CSS + custom inline styles
+- **Styling**: Tailwind CSS + custom inline styles with PlanWise color scheme
 - **Icons**: Lucide React for consistent iconography
 - **Calendar**: React Big Calendar with custom navigation
 - **Font**: Roboto for clean, readable typography
 - **Backend**: Node.js/Express with MongoDB Atlas
 - **State Management**: Centralized state with prop synchronization
 - **Date Handling**: date-fns for smart date operations
+- **UI/UX**: Asana-inspired design with beautiful visuals and hover animations
 
 ## 🏗️ **Hosting Architecture**
 
