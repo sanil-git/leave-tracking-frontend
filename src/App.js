@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useTransition } from 'react';
 import { useAuth } from './contexts/AuthContext';
-import Login from './components/Login';
 import Register from './components/Register';
 import Calendar from './components/Calendar';
 import HolidayManagement from './components/HolidayManagement';
