@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Plane, Calendar, Clock, User, TrendingUp } from 'lucide-react';
 
-const VacationForm = ({ onAddVacation, leaveBalances }) => {
+const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) => {
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -58,6 +58,23 @@ const VacationForm = ({ onAddVacation, leaveBalances }) => {
     const currentBalance = leaveBalances?.[leaveType] || 0;
     if (duration > currentBalance) {
       alert(`Insufficient ${leaveType} balance. You have ${currentBalance} days but requesting ${duration} days.`);
+      return;
+    }
+
+    // Check for duplicate vacations based on overlapping dates
+    const isDuplicate = existingVacations.some(vacation => {
+      // Check for overlapping date ranges
+      const vacationStart = new Date(vacation.startDate || vacation.fromDate);
+      const vacationEnd = new Date(vacation.endDate || vacation.toDate);
+      const newStart = new Date(startDate);
+      const newEnd = new Date(endDate);
+      
+      // Check if date ranges overlap
+      return (newStart <= vacationEnd && newEnd >= vacationStart);
+    });
+
+    if (isDuplicate) {
+      alert('A vacation with overlapping dates already exists. Please choose a different date range.');
       return;
     }
 

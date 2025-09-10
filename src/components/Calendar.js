@@ -1,15 +1,22 @@
 import React, { useState, useMemo, useEffect, useCallback, memo } from 'react';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const locales = {
-  'en-US': require('date-fns/locale/en-US'),
+  'en-US': enUS,
 };
 
 const localizer = dateFnsLocalizer({
-  format,
+  format: (date, formatStr) => {
+    // Custom format for month display to show 3-letter month
+    if (formatStr === 'MMMM yyyy' || formatStr === 'MMMM') {
+      return format(date, 'MMM yyyy', { locale: enUS });
+    }
+    return format(date, formatStr, { locale: enUS });
+  },
   parse,
   startOfWeek,
   getDay,
@@ -19,7 +26,12 @@ const localizer = dateFnsLocalizer({
 const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewChange, isLoading = false }) => {
   const [view, setView] = useState('month');
   // Use currentDate from parent, fallback to current date if not provided
-  const date = useMemo(() => currentDate || new Date(), [currentDate]);
+  const date = useMemo(() => {
+    if (currentDate && currentDate instanceof Date) {
+      return currentDate;
+    }
+    return new Date();
+  }, [currentDate]);
 
 
 
@@ -85,10 +97,15 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
       color: 'white',
       border: '0px',
       display: 'block',
-      padding: '4px 8px',
-      fontSize: '12px',
+      padding: '3px 6px',
+      fontSize: '11px',
       fontWeight: '500',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      maxWidth: '100%',
+      transition: 'all 0.2s ease'
     };
     
     if (event.type === 'vacation') {
@@ -96,6 +113,35 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
     }
     
     return { style };
+  }, []);
+
+  // Custom day cell wrapper to add data-day attribute for weekend detection
+  const dayCellWrapper = useCallback(({ children, value }) => {
+    const dayOfWeek = value.getDay(); // 0 = Sunday, 6 = Saturday
+    return (
+      <div data-day={dayOfWeek} className="rbc-date-cell">
+        {children}
+      </div>
+    );
+  }, []);
+
+  // Custom event component with tooltip for truncated events
+  const EventComponent = useCallback(({ event }) => {
+    const isTruncated = event.title && event.title.length > 15;
+    return (
+      <div
+        title={isTruncated ? event.title : undefined}
+        className="rbc-event-content"
+        style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: '100%'
+        }}
+      >
+        {event.title}
+      </div>
+    );
   }, []);
 
   // Handle navigation - memoized to prevent recreation
@@ -107,11 +153,24 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
 
   // Handle view change - memoized to prevent recreation
   const handleViewChange = useCallback((newView) => {
-    setView(newView);
-    if (onViewChange) {
-      onViewChange(newView);
+    // Only allow view changes from the header buttons, not from date clicks
+    if (newView === 'month') {
+      setView(newView);
+      if (onViewChange) {
+        onViewChange(newView);
+      }
     }
   }, [onViewChange]);
+
+  // Prevent date selection from changing view
+  const handleSelectSlot = useCallback(() => {
+    // Do nothing - prevent view change on date click
+  }, []);
+
+  // Prevent event selection from changing view
+  const handleSelectEvent = useCallback(() => {
+    // Do nothing - prevent view change on event click
+  }, []);
 
 
 
@@ -123,74 +182,61 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
   }, [view, date, events.length, holidaysKey, vacationsKey]); // Include stable keys dependency
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-3 md:p-6" style={{ minHeight: '400px' }}>
-      {/* Custom styled wrapper around the calendar */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-gray-200 rounded-xl p-3 md:p-6 mb-4 md:mb-6 shadow-sm">
-        <div className="flex flex-col space-y-4">
-          {/* Title and Navigation */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <CalendarIcon className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
-              </div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-                {date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-              </h2>
+    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-2xl p-6" style={{ minHeight: '500px' }}>
+      {/* Beautiful Header Section */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 mb-6 shadow-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+              <CalendarIcon className="w-7 h-7 text-white" />
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => {
-                  const newDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-                  handleNavigate(newDate, view, 'PREV');
-                }}
-                className="p-2 md:p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm touch-manipulation"
-                title="Previous Month"
-              >
-                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
-              
-              <button
-                onClick={() => {
-                  const today = new Date();
-                  handleNavigate(today, view, 'TODAY');
-                }}
-                className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md transform hover:scale-105 text-sm md:text-base touch-manipulation"
-                title="Go to Today"
-              >
-                Today
-              </button>
-              
-              <button
-                onClick={() => {
-                  const newDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-                  handleNavigate(newDate, view, 'NEXT');
-                }}
-                className="p-2 md:p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm touch-manipulation"
-                title="Next Month"
-              >
-                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white">
+                {date ? date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() : 'CALENDAR'}
+              </h2>
             </div>
           </div>
           
-          {/* View Selection */}
-          <div className="flex items-center space-x-1 bg-white rounded-lg p-1 shadow-sm border border-gray-200 w-full sm:w-auto">
-            {['month', 'week', 'day'].map((viewOption) => (
-              <button
-                key={viewOption}
-                onClick={() => handleViewChange(viewOption)}
-                className={`flex-1 sm:flex-none px-3 py-2 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-md transition-all duration-200 touch-manipulation ${
-                  view === viewOption
-                    ? 'bg-blue-600 text-white shadow-md transform scale-105'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                {viewOption.charAt(0).toUpperCase() + viewOption.slice(1)}
-              </button>
-            ))}
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => {
+                if (date) {
+                  const newDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+                  handleNavigate(newDate, view, 'PREV');
+                }
+              }}
+              className="p-3 text-white hover:text-purple-200 hover:bg-white/10 rounded-xl transition-all duration-200 hover:shadow-lg touch-manipulation"
+              title="Previous Month"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            
+            <button
+              onClick={() => {
+                const today = new Date();
+                handleNavigate(today, view, 'TODAY');
+              }}
+              className="px-6 py-3 bg-white text-purple-600 font-bold rounded-xl hover:bg-purple-50 transition-all duration-200 hover:shadow-lg transform hover:scale-105 text-sm md:text-base touch-manipulation"
+              title="Go to Today"
+            >
+              Today
+            </button>
+            
+            <button
+              onClick={() => {
+                if (date) {
+                  const newDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+                  handleNavigate(newDate, view, 'NEXT');
+                }
+              }}
+              className="p-3 text-white hover:text-purple-200 hover:bg-white/10 rounded-xl transition-all duration-200 hover:shadow-lg touch-manipulation"
+              title="Next Month"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
+        
       </div>
       
       {isLoading ? (
@@ -211,12 +257,17 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
           onView={handleViewChange}
           date={date}
           onNavigate={handleNavigate}
+          onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleSelectEvent}
           toolbar={false}
           eventPropGetter={eventStyleGetter}
-          selectable
           popup
           defaultView="month"
-          views={['month', 'week', 'day']}
+          views={['month']}
+          components={{
+            dateCellWrapper: dayCellWrapper,
+            event: EventComponent
+          }}
           messages={{
             next: "Next",
             previous: "Previous",
@@ -226,8 +277,16 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
             day: "Day",
             noEventsInRange: "No events in this range."
           }}
+          formats={{
+            monthHeaderFormat: (date) => format(date, 'MMM yyyy', { locale: enUS }),
+            dayHeaderFormat: (date) => format(date, 'EEE', { locale: enUS }),
+            dayFormat: (date) => format(date, 'd', { locale: enUS }),
+          }}
           step={60}
           timeslots={1}
+          showMultiDayTimes={false}
+          doShowMoreDrillDown={true}
+          popupOffset={{ x: 10, y: 10 }}
         />
       )}
     </div>

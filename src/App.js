@@ -5,8 +5,12 @@ import Calendar from './components/Calendar';
 import HolidayManagement from './components/HolidayManagement';
 import VacationForm from './components/VacationForm';
 import VacationPlanner from './components/VacationPlanner';
+import DashboardPreview from './components/DashboardPreview';
+import Header from './components/Header';
+import Home from './pages/Home';
 import './App.css';
-// import './calendar-tailwind.css'; // Temporarily disabled to fix CSS conflicts
+import './index.css';
+import './calendar-tailwind.css'; // Beautiful calendar styling
 
 // Move API_BASE_URL outside component to avoid dependency issues
 const API_BASE_URL = 'https://leave-tracking-backend.onrender.com';
@@ -195,6 +199,9 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, token]);
 
+  // Debug: Log current state
+  // console.log('App state:', { loading, user, showLogin });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
@@ -210,302 +217,131 @@ function App() {
   if (!user) {
     return (
       <div className="min-h-screen bg-white">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-2xl font-bold" style={{color: '#581c87'}}>
-                  <span className="inline-block animate-pulse">P</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.1s'}}>l</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.2s'}}>a</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.3s'}}>n</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.4s'}}>W</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.5s'}}>i</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.6s'}}>s</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.7s'}}>e</span>
-                </h1>
-        </div>
-              <div className="flex items-center space-x-4">
-                {showLogin === null ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        console.log('Sign In clicked, showLogin will be:', true);
-                        setShowLogin(true);
-                      }}
-                      className="text-gray-600 hover:text-gray-900 font-medium"
-                    >
-                      Sign In
-                    </button>
-                    <button
-                      onClick={() => {
-                        console.log('Get Started clicked, showLogin will be:', false);
-                        setShowLogin(false);
-                      }}
-                      className="text-white px-6 py-2 rounded-full font-medium transition-colors hover:opacity-90"
-                      style={{backgroundColor: '#6b21a8'}}
-                    >
-                      Get Started
-                    </button>
-                  </>
-                ) : (
+        {showLogin === null ? (
+          <Home 
+            onSignIn={() => setShowLogin(true)}
+            onGetStarted={() => setShowLogin(false)}
+            onBackToHome={() => setShowLogin(null)}
+            showBackButton={false}
+          />
+        ) : (
+          <>
+            <Header 
+              onSignIn={() => setShowLogin(true)}
+              onGetStarted={() => setShowLogin(false)}
+              onBackToHome={() => setShowLogin(null)}
+              showBackButton={true}
+            />
+            
+            <main className="min-h-screen">
+              <div className="max-w-md mx-auto py-20">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    {showLogin ? 'Sign In' : 'Get Started'}
+                  </h2>
+                  <p className="text-gray-600">
+                    {showLogin ? 'Welcome back! Please sign in to your account.' : 'Create your account to start tracking your leave.'}
+                  </p>
+                </div>
+                
+                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
+                  {showLogin ? (
+                    <>
+                      <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const formData = new FormData(e.target);
+                        const email = formData.get('email');
+                        const password = formData.get('password');
+                        
+                        try {
+                          await login(email, password);
+                          // Login successful, the AuthContext will handle the state update
+                        } catch (error) {
+                          console.error('Login failed:', error);
+                          alert('Login failed. Please check your credentials.');
+                        }
+                      }} className="space-y-6">
+                        <div>
+                          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                            Email address
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              id="email"
+                              name="email"
+                              type="email"
+                              required
+                              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              placeholder="Enter your email"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            Password
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              id="password"
+                              name="password"
+                              type="password"
+                              required
+                              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              placeholder="Enter your password"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <button
+                            type="submit"
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          >
+                            Sign in
+                          </button>
+                        </div>
+                      </form>
+                      <div className="text-center mt-6">
+                        <p className="text-sm text-gray-600">
+                          Don't have an account?{' '}
+                          <button
+                            onClick={() => setShowLogin(false)}
+                            className="font-medium text-blue-600 hover:text-blue-500"
+                          >
+                            Create one here
+                          </button>
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Register />
+                      <div className="text-center mt-6">
+                        <p className="text-sm text-gray-600">
+                          Already have an account?{' '}
+                          <button
+                            onClick={() => setShowLogin(true)}
+                            className="font-medium text-blue-600 hover:text-blue-500"
+                          >
+                            Sign in here
+                          </button>
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+                
+                <div className="text-center mt-6">
                   <button
                     onClick={() => setShowLogin(null)}
-                    className="flex items-center text-gray-600 hover:text-gray-900 font-medium"
+                    className="text-gray-500 hover:text-gray-700 text-sm"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Home
+                    ← Back to home
                   </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content - Asana Homepage Template */}
-        <div className="min-h-screen">
-          {showLogin === null ? (
-            <>
-              {/* Hero Section */}
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-20">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="text-center mb-16">
-                    <h1 className="text-5xl md:text-6xl font-bold mb-6" style={{color: '#581c87'}}>
-                      PlanWise
-                    </h1>
-                    
-                    <p className="text-xl mb-12 max-w-3xl mx-auto" style={{color: '#1F2937'}}>
-                      Smart leave planning that saves you time and money. Track holidays, plan vacations, and discover long weekends with AI-powered insights.
-                    </p>
-                  </div>
-
-                  {/* Features Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{backgroundColor: '#f3e8ff'}}>
-                        <span className="text-3xl">📅</span>
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2" style={{color: '#111827'}}>Track Leave</h3>
-                      <p className="text-sm" style={{color: '#334155'}}>Monitor your EL, SL, and CL balances with real-time updates</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{backgroundColor: '#dcfce7'}}>
-                        <span className="text-3xl">✈️</span>
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2" style={{color: '#111827'}}>Plan Vacations</h3>
-                      <p className="text-sm" style={{color: '#334155'}}>Plan multi-day vacations with smart date validation</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{backgroundColor: '#dbeafe'}}>
-                        <span className="text-3xl">🤖</span>
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2" style={{color: '#111827'}}>AI Insights</h3>
-                      <p className="text-sm" style={{color: '#334155'}}>Get smart recommendations for optimal vacation timing</p>
-                    </div>
-                  </div>
-
-                  {/* Dashboard Preview */}
-                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl max-w-4xl mx-auto">
-                    <div className="text-center mb-6">
-                      <h3 className="text-2xl font-bold mb-2" style={{color: '#111827'}}>See PlanWise in Action</h3>
-                      <p className="text-sm" style={{color: '#334155'}}>Your smart leave planning dashboard</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                      {/* Calendar Mock */}
-                      <div className="lg:col-span-2">
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="font-semibold text-gray-700">March 2024</h4>
-                            <div className="flex space-x-2">
-                              <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                              <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-7 gap-2 text-sm">
-                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                              <div key={i} className="text-center text-gray-500 py-2">{day}</div>
-                            ))}
-                            {Array.from({length: 28}, (_, i) => (
-                              <div key={i} className={`text-center py-2 rounded ${
-                                i === 15 ? 'bg-purple-100 text-purple-700 font-semibold' :
-                                i === 16 ? 'bg-green-100 text-green-700' :
-                                i === 22 ? 'bg-orange-100 text-orange-700' :
-                                'text-gray-600 hover:bg-gray-100'
-                              }`}>
-                                {i + 1}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Side Panel */}
-                      <div className="space-y-4">
-                        <div className="bg-purple-50 rounded-lg p-4">
-                          <h5 className="font-semibold text-purple-900 mb-2">Leave Balances</h5>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">EL:</span>
-                              <span className="font-semibold">12 days</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">SL:</span>
-                              <span className="font-semibold">8 days</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">CL:</span>
-                              <span className="font-semibold">3 days</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-green-50 rounded-lg p-4">
-                          <h5 className="font-semibold text-green-900 mb-2">Long Weekends</h5>
-                          <div className="text-sm text-green-700">
-                            <div className="mb-1">• Mar 15-18 (4 days)</div>
-                            <div className="mb-1">• Apr 19-22 (4 days)</div>
-                            <div>• May 24-27 (4 days)</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
-            </>
-          ) : (
-            /* Login/Register Form - Right in the main content area */
-            <div className="max-w-md mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  {showLogin ? 'Sign In' : 'Get Started'}
-                </h2>
-                <p className="text-gray-600">
-                  {showLogin ? 'Welcome back! Please sign in to your account.' : 'Create your account to start tracking your leave.'}
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-          {showLogin ? (
-            <>
-                    <form onSubmit={async (e) => {
-                      e.preventDefault();
-                      const formData = new FormData(e.target);
-                      const email = formData.get('email');
-                      const password = formData.get('password');
-                      
-                      try {
-                        await login(email, password);
-                        // Login successful, the AuthContext will handle the state update
-                      } catch (error) {
-                        console.error('Login failed:', error);
-                        alert('Login failed. Please check your credentials.');
-                      }
-                    }} className="space-y-6">
-                      <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                          Email address
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            required
-                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                            placeholder="Enter your email"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                          Password
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required
-                            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                            placeholder="Enter your password"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <button
-                          type="submit"
-                          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                          Sign in
-                        </button>
-                      </div>
-                    </form>
-                    <div className="text-center mt-6">
-                <p className="text-sm text-gray-600">
-                  Don't have an account?{' '}
-                  <button
-                    onClick={() => setShowLogin(false)}
-                          className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    Create one here
-                  </button>
-                </p>
-              </div>
-            </>
-          ) : (
-            <>
-              <Register />
-                    <div className="text-center mt-6">
-                <p className="text-sm text-gray-600">
-                  Already have an account?{' '}
-                  <button
-                    onClick={() => setShowLogin(true)}
-                          className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    Sign in here
-                  </button>
-                </p>
-              </div>
-            </>
-          )}
-        </div>
-              
-              <div className="text-center mt-6">
-                <button
-                  onClick={() => setShowLogin(null)}
-                  className="text-gray-500 hover:text-gray-700 text-sm"
-                >
-                  ← Back to home
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Bottom Section */}
-        <div className="bg-gray-50 py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to manage your leave?</h3>
-              <p className="text-lg text-gray-600 mb-8">Join thousands of employees who track their leave efficiently</p>
-              <button
-                onClick={() => setShowLogin(false)}
-                className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
-              >
-                Start Planning Now
-                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
+            </main>
+          </>
+        )}
       </div>
     );
   }
@@ -516,8 +352,8 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
+      <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 md:py-6 space-y-3 sm:space-y-0">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
@@ -542,27 +378,26 @@ function App() {
 
       {/* Data Loading Progress Bar - Temporarily disabled */}
 
-      <main className="max-w-7xl mx-auto py-4 md:py-6 px-4 sm:px-6 lg:px-8">
+      <main id="main-content" className="max-w-7xl mx-auto py-4 md:py-6 px-4 sm:px-6 lg:px-8">
         <div className="py-4 md:py-6">
           {/* Responsive Layout - Single column on mobile, two columns on desktop */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
             {/* Left Column - Calendar, Vacation Form & Holiday Management */}
             <div className="space-y-4 md:space-y-6">
               {/* Calendar Section */}
-              <div className="bg-white rounded-lg shadow">
-                <Calendar
-                  holidays={officialHolidays}
-                  vacations={vacations}
-                  onNavigate={handleCalendarNavigate}
-                  currentDate={calendarDate}
-                  onViewChange={handleCalendarViewChange}
-                  isLoading={false}
-                />
-              </div>
+              <Calendar
+                holidays={officialHolidays}
+                vacations={vacations}
+                onNavigate={navigateToDate}
+                currentDate={calendarDate}
+                onViewChange={handleCalendarViewChange}
+                isLoading={false}
+              />
 
               {/* Vacation Form Section */}
               <VacationForm
                 leaveBalances={leaveBalances}
+                existingVacations={vacations}
                 onAddVacation={async (vacationData) => {
                   try {
                     console.log('Submitting vacation:', vacationData);
@@ -641,15 +476,77 @@ function App() {
               />
             </div>
 
-            {/* Right Column - Vacation Planner */}
+            {/* Right Column - Dashboard Preview */}
             <div className="space-y-4 md:space-y-6">
-              {/* Vacation Planner Section */}
-              <VacationPlanner
+              {/* Dashboard Preview Section */}
+              <DashboardPreview
                 holidays={officialHolidays}
                 vacations={vacations}
                 leaveBalances={leaveBalances}
                 onNavigateToDate={navigateToDate}
                 isLoading={false}
+                onDeleteVacation={async (vacationId) => {
+                  try {
+                    console.log('Deleting vacation:', vacationId);
+                    
+                    // Find the vacation to get its details before deleting
+                    const vacationToDelete = vacations.find(v => v._id === vacationId);
+                    if (!vacationToDelete) {
+                      throw new Error('Vacation not found');
+                    }
+                    
+                    const response = await fetch(`${API_BASE_URL}/vacations/${vacationId}`, {
+                      method: 'DELETE',
+                      headers: {
+                        'Authorization': `Bearer ${token}`
+                      }
+                    });
+                    
+                    if (response.ok) {
+                      console.log('Vacation deleted successfully');
+                      
+                      // Restore leave balance
+                      const { leaveType, days } = vacationToDelete;
+                      const currentBalance = leaveBalances[leaveType] || 0;
+                      const newBalance = currentBalance + days;
+                      
+                      // Update leave balance in database
+                      try {
+                        const balanceResponse = await fetch(`${API_BASE_URL}/leave-balances/${leaveType}`, {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                          },
+                          body: JSON.stringify({ balance: newBalance })
+                        });
+                        
+                        if (balanceResponse.ok) {
+                          // Update local state after successful database update
+                          setLeaveBalances(prev => ({
+                            ...prev,
+                            [leaveType]: newBalance
+                          }));
+                          console.log(`${leaveType} balance restored: ${newBalance}`);
+                        } else {
+                          console.error(`Failed to restore ${leaveType} balance in database`);
+                        }
+                      } catch (error) {
+                        console.error(`Error restoring ${leaveType} balance:`, error);
+                      }
+                      
+                      // Refresh vacations list
+                      fetchVacations();
+                    } else {
+                      const errorText = await response.text();
+                      console.error('Failed to delete vacation:', response.status, errorText);
+                      throw new Error(`Failed to delete vacation: ${response.status} - ${errorText}`);
+                    }
+                  } catch (error) {
+                    console.error('Error deleting vacation:', error);
+                    throw error;
+                  }
+                }}
                 onUpdateLeaveBalances={async (newBalances) => {
                   try {
                     console.log('Updating leave balances:', newBalances);

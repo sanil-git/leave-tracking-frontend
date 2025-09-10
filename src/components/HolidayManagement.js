@@ -32,7 +32,19 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name.trim() && date) {
-      onAddHoliday({ name: name.trim(), date });
+      const trimmedName = name.trim();
+      
+      // Check for duplicate holidays
+      const isDuplicate = holidays.some(holiday => 
+        holiday.name === trimmedName || holiday.date === date
+      );
+      
+      if (isDuplicate) {
+        alert('A holiday with the same name or date already exists. Please choose a different name or date.');
+        return;
+      }
+      
+      onAddHoliday({ name: trimmedName, date });
       setName('');
       setDate('');
     }
