@@ -262,8 +262,8 @@ function App() {
                 </p>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* CTA Button */}
+              <div className="flex justify-start">
                 <button
                   onClick={() => setShowLogin(false)}
                   className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-lg hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -272,12 +272,6 @@ function App() {
                   <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
-                <button
-                  onClick={() => setShowLogin(true)}
-                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold text-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
-                >
-                  Sign in to your account
                 </button>
               </div>
 
@@ -398,61 +392,55 @@ function App() {
           </div>
         </div>
 
-        {/* Login/Register Section */}
+        {/* Login/Register Modal */}
         {showLogin !== null && (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="max-w-md mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
                   {showLogin ? 'Sign In' : 'Get Started'}
                 </h2>
-                <p className="text-gray-600">
-                  {showLogin ? 'Welcome back! Please sign in to your account.' : 'Create your account to start tracking your leave.'}
-                </p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-                {showLogin ? (
-                  <>
-                    <Login />
-                    <div className="text-center mt-6">
-                      <p className="text-sm text-gray-600">
-                        Don't have an account?{' '}
-                        <button
-                          onClick={() => setShowLogin(false)}
-                          className="font-medium text-blue-600 hover:text-blue-500"
-                        >
-                          Create one here
-                        </button>
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Register />
-                    <div className="text-center mt-6">
-                      <p className="text-sm text-gray-600">
-                        Already have an account?{' '}
-                        <button
-                          onClick={() => setShowLogin(true)}
-                          className="font-medium text-blue-600 hover:text-blue-500"
-                        >
-                          Sign in here
-                        </button>
-                      </p>
-                    </div>
-                  </>
-                )}
-              </div>
-              
-              <div className="text-center mt-6">
                 <button
                   onClick={() => setShowLogin(null)}
-                  className="text-gray-500 hover:text-gray-700 text-sm"
+                  className="text-gray-400 hover:text-gray-600"
                 >
-                  ← Back to home
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
+              
+              {showLogin ? (
+                <>
+                  <Login />
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                      Don't have an account?{' '}
+                      <button
+                        onClick={() => setShowLogin(false)}
+                        className="font-medium text-blue-600 hover:text-blue-500"
+                      >
+                        Create one here
+                      </button>
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Register />
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                      Already have an account?{' '}
+                      <button
+                        onClick={() => setShowLogin(true)}
+                        className="font-medium text-blue-600 hover:text-blue-500"
+                      >
+                        Sign in here
+                      </button>
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
