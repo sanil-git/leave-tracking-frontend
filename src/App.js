@@ -440,9 +440,9 @@ function App() {
                       </div>
                       <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Vacation planning</h3>
                       <p className="mb-4" style={{color: '#334155'}}>Plan multi-day vacations with smart date validation and automatic leave balance tracking.</p>
-                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                      <button className="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{color: '#6b21a8'}}>
                         See vacation planning →
-                      </a>
+                      </button>
                     </div>
 
                     {/* Long Weekend Discovery */}
@@ -472,9 +472,9 @@ function App() {
                       </div>
                       <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Long weekend discovery</h3>
                       <p className="mb-4" style={{color: '#334155'}}>Automatically detect future holidays on Monday/Friday to maximize your time off with minimal leave days.</p>
-                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                      <button className="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{color: '#6b21a8'}}>
                         See long weekend discovery →
-                      </a>
+                      </button>
                     </div>
 
                     {/* Leave Balance Management */}
@@ -510,9 +510,9 @@ function App() {
                       </div>
                       <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Leave balance tracking</h3>
                       <p className="mb-4" style={{color: '#334155'}}>Monitor your EL, SL, and CL balances with real-time updates and historical usage patterns.</p>
-                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                      <button className="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{color: '#6b21a8'}}>
                         See leave balance tracking →
-                      </a>
+                      </button>
                     </div>
 
                     {/* Holiday Management */}
@@ -542,9 +542,9 @@ function App() {
                       </div>
                       <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Holiday management</h3>
                       <p className="mb-4" style={{color: '#334155'}}>Add custom holidays and sync with official Indian holidays to keep your calendar updated.</p>
-                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                      <button className="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{color: '#6b21a8'}}>
                         See holiday management →
-                      </a>
+                      </button>
                     </div>
 
                     {/* Calendar Integration */}
@@ -565,9 +565,9 @@ function App() {
                       </div>
                       <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Calendar integration</h3>
                       <p className="mb-4" style={{color: '#334155'}}>Interactive calendar with monthly, weekly, and daily views showing all your planned time off.</p>
-                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                      <button className="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{color: '#6b21a8'}}>
                         See calendar integration →
-                      </a>
+                      </button>
                     </div>
 
                     {/* AI-Powered Insights */}
@@ -597,9 +597,9 @@ function App() {
                       </div>
                       <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>AI-powered insights</h3>
                       <p className="mb-4" style={{color: '#334155'}}>Get smart recommendations for optimal vacation timing and discover cost-saving opportunities.</p>
-                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                      <button className="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{color: '#6b21a8'}}>
                         See AI insights →
-                      </a>
+                      </button>
                     </div>
                   </div>
                 </div>
