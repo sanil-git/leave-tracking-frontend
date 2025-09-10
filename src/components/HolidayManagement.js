@@ -65,7 +65,7 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
       </h3>
       
       {/* Add Holiday Form */}
-      <form onSubmit={handleSubmit} className="mb-6">
+      <form onSubmit={handleSubmit} className="mb-4 md:mb-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label htmlFor="holidayName" className="block text-sm font-medium text-gray-700 mb-1">
@@ -76,7 +76,7 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
               id="holidayName"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base touch-manipulation"
               placeholder="e.g., Company Holiday"
               required
             />
@@ -91,7 +91,7 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
               id="holidayDate"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 md:py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base touch-manipulation"
               required
             />
           </div>

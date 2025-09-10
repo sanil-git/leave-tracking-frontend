@@ -210,45 +210,246 @@ function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Leave Tracking App
-          </h2>
-        </div>
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          {showLogin ? (
-            <>
-              <Login />
-              <div className="text-center mt-4">
-                <p className="text-sm text-gray-600">
-                  Don't have an account?{' '}
-                  <button
-                    onClick={() => setShowLogin(false)}
-                    className="font-medium text-indigo-500"
-                  >
-                    Create one here
-                  </button>
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <h1 className="text-2xl font-bold text-blue-600">
+                  <span className="inline-block animate-pulse">L</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.1s'}}>e</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.2s'}}>a</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.3s'}}>v</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.4s'}}>e</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.5s'}}>T</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.6s'}}>r</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.7s'}}>a</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.8s'}}>c</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.9s'}}>k</span>
+                </h1>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => setShowLogin(true)}
+                  className="text-gray-600 hover:text-gray-900 font-medium"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setShowLogin(false)}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-full font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Content */}
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                  Welcome to your
+                  <span className="block text-blue-600">leave management</span>
+                </h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Track your holidays, plan vacations, and manage leave balances with ease. Never miss an important date again.
                 </p>
               </div>
-            </>
-          ) : (
-            <>
-              <Register />
-              <div className="text-center mt-4">
-                <p className="text-sm text-gray-600">
-                  Already have an account?{' '}
-                  <button
-                    onClick={() => setShowLogin(true)}
-                    className="font-medium text-indigo-600 hover:text-indigo-500"
-                  >
-                    Sign in here
-                  </button>
-                </p>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => setShowLogin(false)}
+                  className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-lg hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Start Tracking Now
+                  <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setShowLogin(true)}
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold text-lg hover:border-gray-400 hover:bg-gray-50 transition-all duration-200"
+                >
+                  Sign in to your account
+                </button>
               </div>
-            </>
-          )}
+
+              {/* Features Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8">
+                <div className="text-center p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">📅</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Smart Calendar</h3>
+                  <p className="text-sm text-gray-600">Visual planning</p>
+                </div>
+                
+                <div className="text-center p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">✈️</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Vacation Planner</h3>
+                  <p className="text-sm text-gray-600">Trip planning</p>
+                </div>
+                
+                <div className="text-center p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl">📊</span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">Leave Balances</h3>
+                  <p className="text-sm text-gray-600">Track remaining days</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Visual */}
+            <div className="relative">
+              <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 shadow-2xl">
+                {/* Mock Dashboard Preview */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Leave Dashboard</h3>
+                      <p className="text-sm text-gray-600">December 2024</p>
+                    </div>
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-xl">📅</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                      <div className="flex items-center">
+                        <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-sm">✓</span>
+                        </div>
+                        <span className="text-sm font-medium">Annual Leave</span>
+                      </div>
+                      <span className="text-xs text-green-600">15 days left</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                      <div className="flex items-center">
+                        <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-sm">⏳</span>
+                        </div>
+                        <span className="text-sm font-medium">Sick Leave</span>
+                      </div>
+                      <span className="text-xs text-blue-600">5 days left</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                      <div className="flex items-center">
+                        <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                          <span className="text-sm">🎉</span>
+                        </div>
+                        <span className="text-sm font-medium">Holidays</span>
+                      </div>
+                      <span className="text-xs text-purple-600">12 days</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 pt-4 border-t border-gray-200">
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>This Month</span>
+                      <span>3 days taken</span>
+                    </div>
+                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-blue-600 h-2 rounded-full" style={{width: '20%'}}></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Floating Elements */}
+                <div className="absolute -top-4 -right-4 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-sm">⭐</span>
+                </div>
+                <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-xs">✓</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Bottom Section */}
+        <div className="bg-gray-50 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ready to manage your leave?</h3>
+              <p className="text-lg text-gray-600 mb-8">Join thousands of employees who track their leave efficiently</p>
+              <button
+                onClick={() => setShowLogin(false)}
+                className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+              >
+                Start Planning Now
+                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Login/Register Modal */}
+        {showLogin !== null && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {showLogin ? 'Sign In' : 'Get Started'}
+                </h2>
+                <button
+                  onClick={() => setShowLogin(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {showLogin ? (
+                <>
+                  <Login />
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                      Don't have an account?{' '}
+                      <button
+                        onClick={() => setShowLogin(false)}
+                        className="font-medium text-blue-600 hover:text-blue-500"
+                      >
+                        Create one here
+                      </button>
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Register />
+                  <div className="text-center mt-4">
+                    <p className="text-sm text-gray-600">
+                      Already have an account?{' '}
+                      <button
+                        onClick={() => setShowLogin(true)}
+                        className="font-medium text-blue-600 hover:text-blue-500"
+                      >
+                        Sign in here
+                      </button>
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -262,11 +463,11 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <h1 className="text-3xl font-bold text-gray-900">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 md:py-6 space-y-3 sm:space-y-0">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
               Welcome, {user.name}!
             </h1>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3 md:space-x-4 w-full sm:w-auto justify-between sm:justify-end">
               {/* Backend Status Indicator */}
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -274,7 +475,7 @@ function App() {
               </div>
               <button
                 onClick={logout}
-                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 md:px-4 rounded text-sm md:text-base"
               >
                 Logout
               </button>
@@ -285,12 +486,12 @@ function App() {
 
       {/* Data Loading Progress Bar - Temporarily disabled */}
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          {/* Two Column Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Calendar & Holiday Management */}
-            <div className="space-y-6">
+      <main className="max-w-7xl mx-auto py-4 md:py-6 px-4 sm:px-6 lg:px-8">
+        <div className="py-4 md:py-6">
+          {/* Responsive Layout - Single column on mobile, two columns on desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+            {/* Left Column - Calendar, Vacation Form & Holiday Management */}
+            <div className="space-y-4 md:space-y-6">
               {/* Calendar Section */}
               <div className="bg-white rounded-lg shadow">
                 <Calendar
@@ -302,16 +503,6 @@ function App() {
                   isLoading={false}
                 />
               </div>
-
-              {/* Holiday Management Section */}
-              <HolidayManagement
-                holidays={officialHolidays}
-                API_BASE_URL={API_BASE_URL}
-                token={token}
-                onAddHoliday={handleAddHoliday}
-                onDeleteHoliday={handleDeleteHoliday}
-                isLoading={false}
-              />
 
               {/* Vacation Form Section */}
               <VacationForm
@@ -382,10 +573,21 @@ function App() {
                   }
                 }}
               />
+
+              {/* Holiday Management Section */}
+              <HolidayManagement
+                holidays={officialHolidays}
+                API_BASE_URL={API_BASE_URL}
+                token={token}
+                onAddHoliday={handleAddHoliday}
+                onDeleteHoliday={handleDeleteHoliday}
+                isLoading={false}
+              />
             </div>
 
             {/* Right Column - Vacation Planner */}
-            <div>
+            <div className="space-y-4 md:space-y-6">
+              {/* Vacation Planner Section */}
               <VacationPlanner
                 holidays={officialHolidays}
                 vacations={vacations}

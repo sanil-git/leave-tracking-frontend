@@ -106,8 +106,8 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
           </button>
         </h3>
         
-        <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+          <div className="text-center p-3 md:p-4 bg-blue-50 rounded-lg">
             {isLoading ? (
               <div className="text-2xl font-bold text-blue-600">
                 <div className="animate-pulse bg-blue-200 h-8 w-16 mx-auto rounded"></div>
@@ -124,18 +124,18 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                   }));
                 }}
                 disabled={isSaving}
-                className="w-full text-2xl font-bold text-blue-600 bg-transparent border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 text-center disabled:opacity-60"
+                className="w-full text-xl md:text-2xl font-bold text-blue-600 bg-transparent border-b-2 border-blue-300 focus:outline-none focus:border-blue-500 text-center disabled:opacity-60 touch-manipulation"
                 min="0"
               />
             ) : (
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-xl md:text-2xl font-bold text-blue-600">
                 {parseInt(leaveBalances?.EL) || 30}
               </div>
             )}
             <div className="text-sm text-blue-800">Earned Leave</div>
           </div>
           
-          <div className="text-center p-3 bg-green-50 rounded-lg">
+          <div className="text-center p-3 md:p-4 bg-green-50 rounded-lg">
             {isEditingBalances ? (
               <input
                 type="number"
@@ -148,18 +148,18 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                   }));
                 }}
                 disabled={isSaving}
-                className="w-full text-2xl font-bold text-green-600 bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-green-500 text-center disabled:opacity-60"
+                className="w-full text-xl md:text-2xl font-bold text-green-600 bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-green-500 text-center disabled:opacity-60 touch-manipulation"
                 min="0"
               />
             ) : (
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-xl md:text-2xl font-bold text-green-600">
                 {parseInt(leaveBalances?.SL) || 6}
               </div>
             )}
             <div className="text-sm text-green-800">Sick Leave</div>
           </div>
           
-          <div className="text-center p-3 bg-yellow-50 rounded-lg">
+          <div className="text-center p-3 md:p-4 bg-yellow-50 rounded-lg">
             {isEditingBalances ? (
               <input
                 type="number"
@@ -172,12 +172,12 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
                   }));
                 }}
                 disabled={isSaving}
-                className="w-full text-2xl font-bold text-yellow-600 bg-transparent border-b-2 border-yellow-300 focus:outline-none focus:border-yellow-500 text-center disabled:opacity-60"
+                className="w-full text-xl md:text-2xl font-bold text-yellow-600 bg-transparent border-b-2 border-yellow-300 focus:outline-none focus:border-yellow-500 text-center disabled:opacity-60 touch-manipulation"
                 min="0"
 
               />
             ) : (
-              <div className="text-2xl font-bold text-yellow-600">
+              <div className="text-xl md:text-2xl font-bold text-yellow-600">
                 {parseInt(leaveBalances?.CL) || 3}
               </div>
             )}
@@ -288,8 +288,6 @@ const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalan
             ))}
           </div>
         )}
-        
-
       </div>
 
       {/* Quick Stats */}

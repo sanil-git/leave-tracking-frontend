@@ -123,17 +123,17 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
   }, [view, date, events.length, holidaysKey, vacationsKey]); // Include stable keys dependency
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6" style={{ minHeight: '700px' }}>
+    <div className="bg-white rounded-xl shadow-lg p-3 md:p-6" style={{ minHeight: '400px' }}>
       {/* Custom styled wrapper around the calendar */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
-        <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
-          {/* Left side - Title and Navigation */}
-          <div className="flex items-center space-x-4">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-gray-200 rounded-xl p-3 md:p-6 mb-4 md:mb-6 shadow-sm">
+        <div className="flex flex-col space-y-4">
+          {/* Title and Navigation */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-blue-100 rounded-lg">
-                <CalendarIcon className="w-6 h-6 text-blue-600" />
+                <CalendarIcon className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
                 {date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </h2>
             </div>
@@ -144,10 +144,10 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
                   const newDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
                   handleNavigate(newDate, view, 'PREV');
                 }}
-                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
+                className="p-2 md:p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm touch-manipulation"
                 title="Previous Month"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
               </button>
               
               <button
@@ -155,7 +155,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
                   const today = new Date();
                   handleNavigate(today, view, 'TODAY');
                 }}
-                className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md transform hover:scale-105"
+                className="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 hover:shadow-md transform hover:scale-105 text-sm md:text-base touch-manipulation"
                 title="Go to Today"
               >
                 Today
@@ -166,21 +166,21 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
                   const newDate = new Date(date.getFullYear(), date.getMonth() + 1, 1);
                   handleNavigate(newDate, view, 'NEXT');
                 }}
-                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm"
+                className="p-2 md:p-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:shadow-sm touch-manipulation"
                 title="Next Month"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
               </button>
             </div>
           </div>
           
-          {/* Right side - View Selection */}
-          <div className="flex items-center space-x-1 bg-white rounded-lg p-1 shadow-sm border border-gray-200">
+          {/* View Selection */}
+          <div className="flex items-center space-x-1 bg-white rounded-lg p-1 shadow-sm border border-gray-200 w-full sm:w-auto">
             {['month', 'week', 'day'].map((viewOption) => (
               <button
                 key={viewOption}
                 onClick={() => handleViewChange(viewOption)}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                className={`flex-1 sm:flex-none px-3 py-2 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-md transition-all duration-200 touch-manipulation ${
                   view === viewOption
                     ? 'bg-blue-600 text-white shadow-md transform scale-105'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -206,10 +206,11 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: 600 }}
+          style={{ height: window.innerWidth < 768 ? 400 : 600 }}
           view={view}
           onView={handleViewChange}
           date={date}
+          onNavigate={handleNavigate}
           toolbar={false}
           eventPropGetter={eventStyleGetter}
           selectable
