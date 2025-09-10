@@ -4,7 +4,6 @@ import Register from './components/Register';
 import Calendar from './components/Calendar';
 import HolidayManagement from './components/HolidayManagement';
 import VacationForm from './components/VacationForm';
-import VacationPlanner from './components/VacationPlanner';
 import DashboardPreview from './components/DashboardPreview';
 import Header from './components/Header';
 import Home from './pages/Home';
@@ -179,9 +178,6 @@ function App() {
   }, [token, fetchOfficialHolidays]);
 
   // Memoized calendar navigation handlers to avoid prop churn causing re-renders
-  const handleCalendarNavigate = useCallback((action, newDate) => {
-    setCalendarDate(newDate);
-  }, []);
 
   const handleCalendarViewChange = useCallback((view) => {
     // no-op placeholder to keep stable reference if needed later

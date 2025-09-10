@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, Bell, CheckCircle, Calendar, Clock, Star, Users, Edit3, Plane, MapPin, Trash2 } from 'lucide-react';
+import { TrendingUp, Bell, CheckCircle, Calendar, Clock, Users, Edit3, Plane, MapPin, Trash2 } from 'lucide-react';
 
 /**
  * DashboardPreview component - Shows beautiful leave balance cards and smart insights
