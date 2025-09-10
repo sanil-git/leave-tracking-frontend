@@ -200,7 +200,7 @@ function App() {
       <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Loading Leave Tracking App</h2>
+            <h2 className="text-xl font-semibold text-gray-700 mb-2">Loading PlanWise</h2>
           <p className="text-gray-500">Please wait while we set up your account...</p>
         </div>
       </div>
@@ -215,17 +215,15 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center">
-                <h1 className="text-2xl font-bold text-blue-600">
-                  <span className="inline-block animate-pulse">L</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.1s'}}>e</span>
+                <h1 className="text-2xl font-bold" style={{color: '#581c87'}}>
+                  <span className="inline-block animate-pulse">P</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.1s'}}>l</span>
                   <span className="inline-block animate-pulse" style={{animationDelay: '0.2s'}}>a</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.3s'}}>v</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.4s'}}>e</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.5s'}}>T</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.6s'}}>r</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.7s'}}>a</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.8s'}}>c</span>
-                  <span className="inline-block animate-pulse" style={{animationDelay: '0.9s'}}>k</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.3s'}}>n</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.4s'}}>W</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.5s'}}>i</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.6s'}}>s</span>
+                  <span className="inline-block animate-pulse" style={{animationDelay: '0.7s'}}>e</span>
                 </h1>
         </div>
               <div className="flex items-center space-x-4">
@@ -266,131 +264,347 @@ function App() {
           </div>
         </header>
 
-        {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Main Content - Asana Homepage Template */}
+        <div className="min-h-screen">
           {showLogin === null ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left Side - Content */}
-              <div className="space-y-8">
-                <div>
-                  <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-                    Welcome to your
-                    <span className="block text-blue-600">leave management</span>
-                  </h2>
-                  <p className="text-xl text-gray-600 leading-relaxed">
-                    Track your holidays, plan vacations, and manage leave balances with ease. Never miss an important date again.
-                  </p>
-                </div>
+            <>
+              {/* Hero Section with Light Pink Background */}
+              <div className="bg-pink-50 py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight" style={{color: '#581c87'}}>
+                      AI-powered leave planning that
+                      <br />
+                      saves you time and money
+                    </h1>
+                    
+                    <p className="text-lg mb-10 leading-relaxed max-w-3xl mx-auto" style={{color: '#1F2937'}}>
+                      Get smart predictions for the best vacation timing, discover long weekend opportunities, track ticket prices, and optimize your leave strategy with AI that learns your patterns.
+                    </p>
 
-                {/* CTA Button */}
-                <div className="flex justify-start">
-                  <button
-                    onClick={() => setShowLogin(false)}
-                    className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-semibold text-lg hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    Start Tracking Now
-                    <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Features Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8">
-                  <div className="text-center p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">📅</span>
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                      <button
+                        onClick={() => setShowLogin(false)}
+                        className="text-white px-6 py-3 rounded-lg font-semibold text-base transition-colors hover:opacity-90"
+                        style={{backgroundColor: '#6b21a8'}}
+                      >
+                        Get started
+                      </button>
+                      <button
+                        onClick={() => setShowLogin(true)}
+                        className="bg-white px-6 py-3 rounded-lg font-semibold text-base border transition-colors hover:opacity-90"
+                        style={{color: '#6b21a8', borderColor: '#6b21a8'}}
+                      >
+                        See how it works
+                      </button>
                     </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Smart Calendar</h3>
-                    <p className="text-sm text-gray-600">Visual planning</p>
-                  </div>
-                  
-                  <div className="text-center p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                    <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">✈️</span>
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Vacation Planner</h3>
-                    <p className="text-sm text-gray-600">Trip planning</p>
-                  </div>
-                  
-                  <div className="text-center p-6 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                    <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <span className="text-2xl">📊</span>
-                    </div>
-                    <h3 className="font-semibold text-gray-900 mb-2">Leave Balances</h3>
-                    <p className="text-sm text-gray-600">Track remaining days</p>
                   </div>
                 </div>
               </div>
 
-              {/* Right Side - Visual */}
-              <div className="relative">
-                <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 shadow-2xl">
-                  {/* Mock Dashboard Preview */}
-                  <div className="bg-white rounded-2xl p-6 shadow-lg">
-                    <div className="flex items-center justify-between mb-6">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Leave Dashboard</h3>
-                        <p className="text-sm text-gray-600">December 2024</p>
-                      </div>
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-xl">📅</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                        <div className="flex items-center">
-                          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                            <span className="text-sm">✓</span>
-                          </div>
-                          <span className="text-sm font-medium">Annual Leave</span>
-                        </div>
-                        <span className="text-xs text-green-600">15 days left</span>
+              {/* Lower Section with White Background and Visuals */}
+              <div className="bg-white py-20 relative">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="text-center mb-16">
+                    <h2 className="text-3xl font-bold mb-4" style={{color: '#111827'}}>See how PlanWise keeps your leave planning organized</h2>
+                    <p className="text-lg" style={{color: '#334155'}}>Discover long weekends, track balances, and plan vacations all in one place</p>
+                  </div>
+
+                  {/* Dashboard Preview - Large Visual */}
+                  <div className="mb-20">
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl p-8 shadow-2xl border border-purple-100">
+                      <div className="text-center mb-8">
+                        <h3 className="text-2xl font-bold mb-2" style={{color: '#581c87'}}>Your Smart Leave Dashboard</h3>
+                        <p className="text-lg" style={{color: '#334155'}}>Everything you need to plan the perfect vacation</p>
                       </div>
                       
-                      <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                        <div className="flex items-center">
-                          <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                            <span className="text-sm">⏳</span>
+                      {/* Mock Dashboard Image */}
+                      <div className="relative max-w-5xl mx-auto">
+                        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                          {/* Mock Header */}
+                          <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-8 h-8 rounded-lg" style={{backgroundColor: '#581c87'}}></div>
+                                <span className="font-semibold text-gray-700">PlanWise Dashboard</span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                                <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-sm font-medium">Sick Leave</span>
-                        </div>
-                        <span className="text-xs text-blue-600">5 days left</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                        <div className="flex items-center">
-                          <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                            <span className="text-sm">🎉</span>
+                          
+                          {/* Mock Content Grid */}
+                          <div className="p-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                              {/* Calendar Mock */}
+                              <div className="lg:col-span-2">
+                                <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="font-semibold text-gray-700">March 2024</h4>
+                                    <div className="flex space-x-2">
+                                      <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                                      <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-7 gap-2 text-sm">
+                                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                                      <div key={i} className="text-center text-gray-500 py-2">{day}</div>
+                                    ))}
+                                    {Array.from({length: 35}, (_, i) => (
+                                      <div key={i} className={`text-center py-2 rounded ${
+                                        i === 15 ? 'bg-purple-100 text-purple-700 font-semibold' :
+                                        i === 16 ? 'bg-green-100 text-green-700' :
+                                        i === 22 ? 'bg-orange-100 text-orange-700' :
+                                        'text-gray-600 hover:bg-gray-100'
+                                      }`}>
+                                        {i < 6 ? '' : i - 5}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Side Panel Mock */}
+                              <div className="space-y-4">
+                                <div className="bg-purple-50 rounded-lg p-4">
+                                  <h5 className="font-semibold text-purple-900 mb-2">Leave Balances</h5>
+                                  <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                      <span className="text-gray-600">EL:</span>
+                                      <span className="font-semibold">12 days</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-gray-600">SL:</span>
+                                      <span className="font-semibold">8 days</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span className="text-gray-600">CL:</span>
+                                      <span className="font-semibold">3 days</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-green-50 rounded-lg p-4">
+                                  <h5 className="font-semibold text-green-900 mb-2">Long Weekends</h5>
+                                  <div className="text-sm text-green-700">
+                                    <div className="mb-1">• Mar 15-18 (4 days)</div>
+                                    <div className="mb-1">• Apr 19-22 (4 days)</div>
+                                    <div>• May 24-27 (4 days)</div>
+                                  </div>
+                                </div>
+                                
+                                <div className="bg-blue-50 rounded-lg p-4">
+                                  <h5 className="font-semibold text-blue-900 mb-2">AI Insights</h5>
+                                  <div className="text-sm text-blue-700">
+                                    <div className="mb-1">• Best time: Mar 15-22</div>
+                                    <div className="mb-1">• Flights 30% cheaper</div>
+                                    <div>• Perfect weather forecast</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <span className="text-sm font-medium">Holidays</span>
                         </div>
-                        <span className="text-xs text-purple-600">12 days</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 pt-4 border-t border-gray-200">
-                      <div className="flex justify-between text-sm text-gray-600">
-                        <span>This Month</span>
-                        <span>3 days taken</span>
-                      </div>
-                      <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{width: '20%'}}></div>
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Floating Elements */}
-                  <div className="absolute -top-4 -right-4 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-sm">⭐</span>
-                  </div>
-                  <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center shadow-lg">
-                    <span className="text-xs">✓</span>
+
+                  {/* Use Cases Grid - Asana Style */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    {/* Vacation Planning */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor: '#f3e8ff'}}>
+                          <span className="text-3xl">✈️</span>
+                        </div>
+                        {/* Mini Calendar Visual */}
+                        <div className="absolute -top-2 -right-2 bg-white rounded-lg shadow-md p-2 border">
+                          <div className="text-xs text-gray-500 mb-1">Mar 2024</div>
+                          <div className="grid grid-cols-7 gap-1 text-xs">
+                            {['S','M','T','W','T','F','S'].map((d,i) => (
+                              <div key={i} className="text-center text-gray-400">{d}</div>
+                            ))}
+                            {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21].map((d,i) => (
+                              <div key={i} className={`text-center py-1 rounded ${
+                                d >= 15 && d <= 18 ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-600'
+                              }`}>
+                                {d}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Vacation planning</h3>
+                      <p className="mb-4" style={{color: '#334155'}}>Plan multi-day vacations with smart date validation and automatic leave balance tracking.</p>
+                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                        See vacation planning →
+                      </a>
+                    </div>
+
+                    {/* Long Weekend Discovery */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor: '#dcfce7'}}>
+                          <span className="text-3xl">📅</span>
+                        </div>
+                        {/* Long Weekend Visual */}
+                        <div className="absolute -top-2 -right-2 bg-white rounded-lg shadow-md p-3 border">
+                          <div className="text-xs text-gray-500 mb-2">Upcoming</div>
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                              <div className="text-xs text-gray-700">Mar 15-18</div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                              <div className="text-xs text-gray-700">Apr 19-22</div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+                              <div className="text-xs text-gray-700">May 24-27</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Long weekend discovery</h3>
+                      <p className="mb-4" style={{color: '#334155'}}>Automatically detect future holidays on Monday/Friday to maximize your time off with minimal leave days.</p>
+                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                        See long weekend discovery →
+                      </a>
+                    </div>
+
+                    {/* Leave Balance Management */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor: '#dbeafe'}}>
+                          <span className="text-3xl">📊</span>
+                        </div>
+                        {/* Balance Chart Visual */}
+                        <div className="absolute -top-2 -right-2 bg-white rounded-lg shadow-md p-3 border">
+                          <div className="text-xs text-gray-500 mb-2">Balances</div>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600">EL</span>
+                              <div className="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="w-8 h-2 bg-blue-500 rounded-full"></div>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600">SL</span>
+                              <div className="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="w-6 h-2 bg-green-500 rounded-full"></div>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600">CL</span>
+                              <div className="w-12 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div className="w-3 h-2 bg-orange-500 rounded-full"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Leave balance tracking</h3>
+                      <p className="mb-4" style={{color: '#334155'}}>Monitor your EL, SL, and CL balances with real-time updates and historical usage patterns.</p>
+                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                        See leave balance tracking →
+                      </a>
+                    </div>
+
+                    {/* Holiday Management */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor: '#FFE8D2'}}>
+                          <span className="text-3xl">🎉</span>
+                        </div>
+                        {/* Holiday List Visual */}
+                        <div className="absolute -top-2 -right-2 bg-white rounded-lg shadow-md p-3 border">
+                          <div className="text-xs text-gray-500 mb-2">Holidays</div>
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                              <div className="text-xs text-gray-700">Holi</div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                              <div className="text-xs text-gray-700">Diwali</div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                              <div className="text-xs text-gray-700">Eid</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Holiday management</h3>
+                      <p className="mb-4" style={{color: '#334155'}}>Add custom holidays and sync with official Indian holidays to keep your calendar updated.</p>
+                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                        See holiday management →
+                      </a>
+                    </div>
+
+                    {/* Calendar Integration */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor: '#f3e8ff'}}>
+                          <span className="text-3xl">📆</span>
+                        </div>
+                        {/* Calendar View Visual */}
+                        <div className="absolute -top-2 -right-2 bg-white rounded-lg shadow-md p-2 border">
+                          <div className="text-xs text-gray-500 mb-1">Views</div>
+                          <div className="flex space-x-1">
+                            <div className="w-6 h-4 bg-purple-100 rounded text-xs flex items-center justify-center">M</div>
+                            <div className="w-6 h-4 bg-gray-100 rounded text-xs flex items-center justify-center">W</div>
+                            <div className="w-6 h-4 bg-gray-100 rounded text-xs flex items-center justify-center">D</div>
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>Calendar integration</h3>
+                      <p className="mb-4" style={{color: '#334155'}}>Interactive calendar with monthly, weekly, and daily views showing all your planned time off.</p>
+                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                        See calendar integration →
+                      </a>
+                    </div>
+
+                    {/* AI-Powered Insights */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      <div className="relative mb-6">
+                        <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor: '#dcfce7'}}>
+                          <span className="text-3xl">🤖</span>
+                        </div>
+                        {/* AI Insights Visual */}
+                        <div className="absolute -top-2 -right-2 bg-white rounded-lg shadow-md p-3 border">
+                          <div className="text-xs text-gray-500 mb-2">AI Tips</div>
+                          <div className="space-y-1">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                              <div className="text-xs text-gray-700">Best time</div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                              <div className="text-xs text-gray-700">Save 30%</div>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                              <div className="text-xs text-gray-700">Perfect weather</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2" style={{color: '#111827'}}>AI-powered insights</h3>
+                      <p className="mb-4" style={{color: '#334155'}}>Get smart recommendations for optimal vacation timing and discover cost-saving opportunities.</p>
+                      <a href="#" className="inline-flex items-center text-sm font-medium" style={{color: '#6b21a8'}}>
+                        See AI insights →
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </>
           ) : (
             /* Login/Register Form - Right in the main content area */
             <div className="max-w-md mx-auto">
@@ -404,8 +618,8 @@ function App() {
               </div>
               
               <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-                {showLogin ? (
-                  <>
+          {showLogin ? (
+            <>
                     <form onSubmit={async (e) => {
                       e.preventDefault();
                       const formData = new FormData(e.target);
@@ -461,13 +675,13 @@ function App() {
                       </div>
                     </form>
                     <div className="text-center mt-6">
-                      <p className="text-sm text-gray-600">
-                        Don't have an account?{' '}
-                        <button
-                          onClick={() => setShowLogin(false)}
+                <p className="text-sm text-gray-600">
+                  Don't have an account?{' '}
+                  <button
+                    onClick={() => setShowLogin(false)}
                           className="font-medium text-blue-600 hover:text-blue-500"
-                        >
-                          Create one here
+                  >
+                    Create one here
                   </button>
                 </p>
               </div>
@@ -724,3 +938,5 @@ function App() {
 }
 
 export default App;
+
+
