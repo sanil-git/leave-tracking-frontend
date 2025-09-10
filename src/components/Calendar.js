@@ -147,7 +147,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
   // Handle navigation - memoized to prevent recreation
   const handleNavigate = useCallback((newDate, view, action) => {
     if (onNavigate) {
-      onNavigate(action, newDate);
+      onNavigate(newDate, view, action);
     }
   }, [onNavigate]);
 
