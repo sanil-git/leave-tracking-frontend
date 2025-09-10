@@ -9,7 +9,7 @@ import './App.css';
 // import './calendar-tailwind.css'; // Temporarily disabled to fix CSS conflicts
 
 // Move API_BASE_URL outside component to avoid dependency issues
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://leave-tracking-backend.onrender.com';
 
 function App() {
   const { user, token, loading, login, logout, fetchUserProfile } = useAuth();
