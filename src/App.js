@@ -342,8 +342,9 @@ function App() {
     );
   }
 
-  const navigateToDate = (date) => {
-    setCalendarDate(date);
+  const navigateToDate = (newDate, view, action) => {
+    console.log('Calendar navigation:', { newDate, view, action });
+    setCalendarDate(newDate);
   };
 
 
