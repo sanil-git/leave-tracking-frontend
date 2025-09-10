@@ -398,55 +398,61 @@ function App() {
           </div>
         </div>
 
-        {/* Login/Register Modal */}
+        {/* Login/Register Section */}
         {showLogin !== null && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="max-w-md mx-auto">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">
                   {showLogin ? 'Sign In' : 'Get Started'}
                 </h2>
-                <button
-                  onClick={() => setShowLogin(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <p className="text-gray-600">
+                  {showLogin ? 'Welcome back! Please sign in to your account.' : 'Create your account to start tracking your leave.'}
+                </p>
               </div>
               
-              {showLogin ? (
-                <>
-                  <Login />
-                  <div className="text-center mt-4">
-                    <p className="text-sm text-gray-600">
-                      Don't have an account?{' '}
-                      <button
-                        onClick={() => setShowLogin(false)}
-                        className="font-medium text-blue-600 hover:text-blue-500"
-                      >
-                        Create one here
-                      </button>
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <Register />
-                  <div className="text-center mt-4">
-                    <p className="text-sm text-gray-600">
-                      Already have an account?{' '}
-                      <button
-                        onClick={() => setShowLogin(true)}
-                        className="font-medium text-blue-600 hover:text-blue-500"
-                      >
-                        Sign in here
-                      </button>
-                    </p>
-                  </div>
-                </>
-              )}
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
+                {showLogin ? (
+                  <>
+                    <Login />
+                    <div className="text-center mt-6">
+                      <p className="text-sm text-gray-600">
+                        Don't have an account?{' '}
+                        <button
+                          onClick={() => setShowLogin(false)}
+                          className="font-medium text-blue-600 hover:text-blue-500"
+                        >
+                          Create one here
+                        </button>
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Register />
+                    <div className="text-center mt-6">
+                      <p className="text-sm text-gray-600">
+                        Already have an account?{' '}
+                        <button
+                          onClick={() => setShowLogin(true)}
+                          className="font-medium text-blue-600 hover:text-blue-500"
+                        >
+                          Sign in here
+                        </button>
+                      </p>
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              <div className="text-center mt-6">
+                <button
+                  onClick={() => setShowLogin(null)}
+                  className="text-gray-500 hover:text-gray-700 text-sm"
+                >
+                  ← Back to home
+                </button>
+              </div>
             </div>
           </div>
         )}
