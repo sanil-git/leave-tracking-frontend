@@ -184,14 +184,14 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
   return (
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-2xl p-6" style={{ minHeight: '500px' }}>
       {/* Beautiful Header Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 mb-6 shadow-xl">
+      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
-              <CalendarIcon className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shadow-sm">
+              <CalendarIcon className="w-7 h-7 text-purple-600" />
             </div>
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
                 {date ? date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }).toUpperCase() : 'CALENDAR'}
               </h2>
             </div>
@@ -205,7 +205,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
                   handleNavigate(newDate, view, 'PREV');
                 }
               }}
-              className="p-3 text-white hover:text-purple-200 hover:bg-white/10 rounded-xl transition-all duration-200 hover:shadow-lg touch-manipulation"
+              className="p-3 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-200 hover:shadow-sm touch-manipulation"
               title="Previous Month"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -216,7 +216,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
                 const today = new Date();
                 handleNavigate(today, view, 'TODAY');
               }}
-              className="px-6 py-3 bg-white text-purple-600 font-bold rounded-xl hover:bg-purple-50 transition-all duration-200 hover:shadow-lg transform hover:scale-105 text-sm md:text-base touch-manipulation"
+              className="px-6 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all duration-200 hover:shadow-sm transform hover:scale-105 text-sm md:text-base touch-manipulation"
               title="Go to Today"
             >
               Today
@@ -229,7 +229,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
                   handleNavigate(newDate, view, 'NEXT');
                 }
               }}
-              className="p-3 text-white hover:text-purple-200 hover:bg-white/10 rounded-xl transition-all duration-200 hover:shadow-lg touch-manipulation"
+              className="p-3 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-200 hover:shadow-sm touch-manipulation"
               title="Next Month"
             >
               <ChevronRight className="w-5 h-5" />
