@@ -196,7 +196,7 @@ function App() {
   }, [user, token]);
 
   // Debug: Log current state
-  // console.log('App state:', { loading, user, showLogin });
+  console.log('App state:', { loading, user: user?.name, showLogin, hasToken: !!token });
 
   if (loading) {
     return (

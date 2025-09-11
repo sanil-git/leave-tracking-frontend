@@ -113,6 +113,12 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     setLoading(false);
+    
+    // Force a small delay to ensure state updates are processed
+    setTimeout(() => {
+      // Additional cleanup if needed
+      console.log('User logged out successfully');
+    }, 100);
   };
 
   const value = {
