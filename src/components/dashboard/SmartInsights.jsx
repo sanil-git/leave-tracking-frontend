@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, CheckCircle, TrendingUp, Users, MapPin, Loader2 } from 'lucide-react';
+import React from 'react';
+import { Bell, CheckCircle, TrendingUp, Users } from 'lucide-react';
 
 /**
  * SmartInsights - AI-powered insights component (lazy-loaded)
@@ -7,17 +7,6 @@ import { Bell, CheckCircle, TrendingUp, Users, MapPin, Loader2 } from 'lucide-re
  */
 const SmartInsights = ({ leaveBalances, holidays, vacations, aiInsights = {}, aiLoading = {}, aiError = {} }) => {
   
-  // Filter for future vacations only (for AI insights)
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Start of today
-  
-  const futureVacations = vacations?.filter(vacation => {
-    const startDate = new Date(vacation.fromDate || vacation.startDate);
-    return startDate >= today && vacation.destination; // Only vacations WITH destinations
-  }) || [];
-  
-  // Only show destination insights if there are future vacations
-  const showDestinationInsights = futureVacations.length > 0;
   
   
   return (

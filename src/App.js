@@ -285,7 +285,7 @@ function App() {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [vacations.length]); // Remove aiInsightsFetched from dependencies
+  }, [vacations.length, aiInsightsFetched, fetchAIInsights]);
 
 
   if (loading) {
