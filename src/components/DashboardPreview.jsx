@@ -70,6 +70,33 @@ const DashboardPreview = ({
     return uniqueHolidays;
   }, [holidays]);
 
+  // Separate past and future vacations for historical data
+  const { pastVacations, futureVacations } = useMemo(() => {
+    if (!vacations || vacations.length === 0) return { pastVacations: [], futureVacations: [] };
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const past = [];
+    const future = [];
+    
+    vacations.forEach(vacation => {
+      const endDate = new Date(vacation.toDate || vacation.endDate);
+      endDate.setHours(0, 0, 0, 0);
+      
+      if (endDate < today) {
+        past.push(vacation);
+      } else {
+        future.push(vacation);
+      }
+    });
+    
+    return {
+      pastVacations: past.sort((a, b) => new Date(b.toDate || b.endDate) - new Date(a.toDate || a.endDate)), // Most recent first
+      futureVacations: future.sort((a, b) => new Date(a.fromDate || a.startDate) - new Date(b.fromDate || b.startDate)) // Earliest first
+    };
+  }, [vacations]);
+
   // Helper functions
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -92,13 +119,20 @@ const DashboardPreview = ({
   };
 
   const handleDeleteVacation = async (vacationId) => {
+    console.log('Delete button clicked for vacation ID:', vacationId);
+    console.log('onDeleteVacation function available:', !!onDeleteVacation);
+    
     if (onDeleteVacation && window.confirm('Are you sure you want to delete this vacation?')) {
       try {
+        console.log('Calling onDeleteVacation with ID:', vacationId);
         await onDeleteVacation(vacationId);
+        console.log('Vacation deleted successfully');
       } catch (error) {
         console.error('Error deleting vacation:', error);
         alert('Failed to delete vacation. Please try again.');
       }
+    } else {
+      console.log('Delete cancelled or onDeleteVacation not available');
     }
   };
   return (
@@ -243,11 +277,11 @@ const DashboardPreview = ({
               <h4 className="font-semibold text-gray-800">Planned Vacations</h4>
             </div>
             
-            {vacations.length === 0 ? (
+            {futureVacations.length === 0 ? (
               <p className="text-gray-500 text-sm">No vacations planned yet.</p>
             ) : (
               <div className="space-y-3">
-                {vacations.map((vacation) => (
+                {futureVacations.map((vacation) => (
                   <div
                     key={vacation._id}
                     className="group p-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors duration-200 relative"
@@ -302,6 +336,70 @@ const DashboardPreview = ({
                     
                     {vacation.description && (
                       <p className="text-sm text-green-600 mt-2 italic">
+                        "{vacation.description}"
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Historical Data - Past Vacations */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+            <div className="flex items-center mb-4">
+              <Clock className="w-5 h-5 text-gray-600 mr-2" />
+              <h4 className="font-semibold text-gray-800">Historical Data</h4>
+            </div>
+            
+            {pastVacations.length === 0 ? (
+              <p className="text-gray-500 text-sm">No past vacations to show.</p>
+            ) : (
+              <div className="space-y-3">
+                {pastVacations.map((vacation) => (
+                  <div
+                    key={vacation._id}
+                    className="p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900">{vacation.name}</h4>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {vacation.days || vacation.duration || 'N/A'} days
+                        </div>
+                        {vacation.leaveType && (
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            vacation.leaveType === 'EL' ? 'bg-blue-100 text-blue-800' :
+                            vacation.leaveType === 'SL' ? 'bg-green-100 text-green-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {vacation.leaveType}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center text-sm text-gray-600">
+                      <span 
+                        onClick={() => handleDateClick(vacation.fromDate || vacation.startDate)}
+                        className="cursor-pointer hover:text-gray-800 hover:underline transition-colors duration-200"
+                        title="Click to navigate to start date"
+                      >
+                        {formatDate(vacation.fromDate || vacation.startDate)}
+                      </span>
+                      <span className="mx-2">-</span>
+                      <span 
+                        onClick={() => handleDateClick(vacation.toDate || vacation.endDate)}
+                        className="cursor-pointer hover:text-gray-800 hover:underline transition-colors duration-200"
+                        title="Click to navigate to end date"
+                      >
+                        {formatDate(vacation.toDate || vacation.endDate)}
+                      </span>
+                    </div>
+                    
+                    {vacation.description && (
+                      <p className="text-sm text-gray-500 mt-2 italic">
                         "{vacation.description}"
                       </p>
                     )}
