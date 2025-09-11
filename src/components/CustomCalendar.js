@@ -86,19 +86,6 @@ const CustomCalendar = ({
       const normalizedStartDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
       const normalizedEndDate = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
       
-      // Debug logging for vacations
-      if (vacation.name && (vacation.name.includes('summer') || vacation.name.includes('vacation'))) {
-        console.log('Vacation Debug:', {
-          vacationName: vacation.name,
-          startDateStr: startDateStr,
-          endDateStr: endDateStr,
-          normalizedStartDate: normalizedStartDate,
-          normalizedEndDate: normalizedEndDate,
-          checkDate: checkDate,
-          normalizedCheckDate: normalizedCheckDate,
-          inRange: normalizedCheckDate >= normalizedStartDate && normalizedCheckDate <= normalizedEndDate
-        });
-      }
       
       return normalizedCheckDate >= normalizedStartDate && normalizedCheckDate <= normalizedEndDate;
     });

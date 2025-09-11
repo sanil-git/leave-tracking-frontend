@@ -10,10 +10,12 @@ PlanWise revolutionizes leave management with AI-powered insights that help you 
 
 ### 🤖 AI-Powered Intelligence
 - **Smart Vacation Timing**: AI predicts optimal vacation dates based on prices, weather, and workload
-- **Cost-Saving Insights**: Get alerts when flight prices drop for your planned destinations
+- **Destination Recommendations**: AI suggests vacation destinations based on your planned dates and weather patterns
+- **Cost-Saving Insights**: Get alerts when flight prices drop and optimal booking timing recommendations
 - **Long Weekend Discovery**: Automatically detect future holidays on Monday/Friday for extended time off
-- **Pattern Learning**: AI learns your leave preferences and team dynamics for better recommendations
-- **Weather Integration**: Consider weather forecasts in vacation timing suggestions
+- **Team Coordination**: AI analyzes colleague vacation patterns for better team planning
+- **Weather Integration**: Consider weather forecasts in vacation timing and destination suggestions
+- **Interactive AI Demo**: Live demo with contextual AI insights linked to vacation data
 
 ### 📅 Calendar & Holidays
 - **Interactive Calendar**: Monthly, weekly, and daily views with event display
@@ -47,6 +49,16 @@ PlanWise revolutionizes leave management with AI-powered insights that help you 
 - **Quick Stats**: Enhanced statistics with historical data and insights
 - **Historical Data**: Leave balance history, vacation patterns, and time insights
 - **Smart Balance Restoration**: Automatically restores leave balance when vacations are deleted
+
+### 🎬 Interactive Product Demo
+- **Live Demo Section**: "See PlanWise in Action" with working calendar preview
+- **Demo Calendar**: Interactive calendar with vacation and holiday data visualization
+- **Color-Coded Events**: Purple for vacations, orange for holidays, visual event indicators
+- **AI Insights Grid**: 2x2 grid showing contextual AI recommendations
+- **Vacation-Linked AI**: AI insights directly connected to demo vacation data
+- **Smooth Navigation**: "See Demo" button with smooth scroll to demo section
+- **Post-Login Styling**: Demo components match exact post-login dashboard styling
+- **Responsive Design**: Optimized for both desktop and mobile viewing
 
 ### 🔐 Authentication & User Management
 - **Secure Login/Register**: JWT-based authentication system
@@ -149,6 +161,9 @@ The app is fully integrated with a Node.js/Express backend. All API endpoints ar
 - **HolidayManagement**: Holiday management with compact single-line form (memoized for performance)
 - **VacationForm**: Smart vacation request form with date validation
 - **VacationPlanner**: Right panel with leave balances, planning insights, and historical data
+- **ProductDemo**: Interactive demo with live calendar, vacation data, and AI insights grid
+- **Hero**: Landing page with mini calendar preview and AI analytics showcase
+- **DashboardPreview**: Post-login dashboard components with exact styling for demo consistency
 
 ### Performance Optimizations (Latest)
 - **React.memo**: HolidayManagement and NationalHolidays wrapped to prevent unnecessary re-renders
@@ -168,6 +183,22 @@ The app is fully integrated with a Node.js/Express backend. All API endpoints ar
 - **Prop Synchronization**: Child components sync with parent state when not editing
 - **Calendar Navigation**: External date navigation with internal state synchronization
 - **Real-time Updates**: All changes update calendar and components immediately
+
+## 🆕 Latest Updates
+
+### AI-Powered Demo Experience (Latest)
+- **Interactive Product Demo**: Complete "See PlanWise in Action" section with live demo
+- **AI Insights Integration**: 2x2 grid showing contextual AI recommendations
+- **Demo Data Visualization**: Calendar with vacation/holiday color coding and event indicators
+- **Smooth Navigation**: "See Demo" button with smooth scroll functionality
+- **Contextual AI**: AI insights linked to actual demo vacation data (Summer Break → Bali/Thailand suggestions)
+- **Professional Styling**: Demo components match exact post-login dashboard styling
+
+### Enhanced User Experience
+- **Scroll Functionality**: Hero "See Demo" button smoothly scrolls to ProductDemo section
+- **Color-Coded Calendar**: Purple for vacations, orange for holidays with visual indicators
+- **Responsive AI Insights**: 2x2 grid layout optimized for space efficiency
+- **Clean Code**: All ESLint warnings resolved for production deployment
 
 ## 🚀 Getting Started
 
