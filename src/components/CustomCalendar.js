@@ -262,7 +262,7 @@ const CustomCalendar = ({
                 className={getDayStyling(dayData)}
                 onClick={() => {
                   // Handle date click if needed
-                  console.log('Date clicked:', dayData.date);
+                  // Date click functionality can be added here
                 }}
               >
                 <div className="text-center font-semibold">

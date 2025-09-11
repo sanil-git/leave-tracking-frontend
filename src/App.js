@@ -202,16 +202,6 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, token]);
 
-  // Debug: Log current state
-  console.log('App state:', { 
-    loading, 
-    user: user?.name, 
-    showLogin, 
-    hasToken: !!token,
-    willShowHome: !user && showLogin === null,
-    willShowLogin: !user && showLogin === true,
-    willShowRegister: !user && showLogin === false
-  });
 
   if (loading) {
     return (
@@ -358,7 +348,6 @@ function App() {
   }
 
   const navigateToDate = (newDate, view, action) => {
-    console.log('Calendar navigation:', { newDate, view, action });
     setCalendarDate(newDate);
   };
 

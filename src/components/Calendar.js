@@ -217,11 +217,7 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
 
 
   // Debug logging - only log when view or date changes (development only)
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Calendar render:', { view, date, eventsCount: events.length, holidaysKey: holidaysKey.substring(0, 50), vacationsKey: vacationsKey.substring(0, 50) });
-    }
-  }, [view, date, events.length, holidaysKey, vacationsKey]); // Include stable keys dependency
+  // Removed debug logging for cleaner console output
 
   return (
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-2xl p-6" style={{ minHeight: '500px' }}>
