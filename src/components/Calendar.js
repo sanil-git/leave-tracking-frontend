@@ -130,14 +130,26 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
       return eventDate.toISOString().split('T')[0] === dateString && event.type === 'vacation';
     });
     
-    // Determine background color based on events
+    // Determine background color based on events (but preserve weekend styling)
     let backgroundColor = '';
-    if (hasHoliday && hasVacation) {
-      backgroundColor = 'bg-gradient-to-br from-blue-100 to-green-100'; // Both holiday and vacation
-    } else if (hasHoliday) {
-      backgroundColor = 'bg-blue-50'; // Holiday only
-    } else if (hasVacation) {
-      backgroundColor = 'bg-green-50'; // Vacation only
+    let eventBorder = '';
+    let eventBorderColor = '';
+    
+    // Only apply event styling if it's not a weekend
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      if (hasHoliday && hasVacation) {
+        backgroundColor = 'bg-gradient-to-br from-blue-100 to-green-100'; // Both holiday and vacation
+        eventBorder = '3px solid';
+        eventBorderColor = '#8b5cf6';
+      } else if (hasHoliday) {
+        backgroundColor = 'bg-blue-50'; // Holiday only
+        eventBorder = '3px solid';
+        eventBorderColor = '#3b82f6';
+      } else if (hasVacation) {
+        backgroundColor = 'bg-green-50'; // Vacation only
+        eventBorder = '3px solid';
+        eventBorderColor = '#10b981';
+      }
     }
     
     return (
@@ -146,8 +158,8 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
         className={`rbc-date-cell ${backgroundColor}`}
         style={{ 
           background: backgroundColor ? undefined : 'transparent',
-          borderLeft: hasHoliday || hasVacation ? '3px solid' : 'none',
-          borderLeftColor: hasHoliday && hasVacation ? '#8b5cf6' : hasHoliday ? '#3b82f6' : hasVacation ? '#10b981' : 'transparent'
+          borderLeft: eventBorder || 'none',
+          borderLeftColor: eventBorderColor || 'transparent'
         }}
       >
         {children}

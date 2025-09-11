@@ -1,5 +1,5 @@
-import React from 'react';
-import { Calendar, Clock, TrendingUp, AlertCircle, CheckCircle, Star } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Calendar, Clock, TrendingUp, AlertCircle, CheckCircle, Star, Plane, MapPin } from 'lucide-react';
 
 /**
  * ProductDemo component - Interactive-looking dashboard preview showing PlanWise in action
@@ -11,6 +11,67 @@ const ProductDemo = ({
   title = "See PlanWise in Action",
   subtitle = "Experience how our AI-powered platform transforms your leave planning"
 }) => {
+  // Generate current month calendar data with demo events
+  const currentMonthData = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    // Get first day of month and how many days to show from previous month
+    const firstDay = new Date(year, month, 1);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay()); // Start from Sunday
+    
+    // Demo events for the current month
+    const demoHolidays = [
+      { name: 'Labor Day', date: new Date(year, month, 2) },
+      { name: 'Thanksgiving', date: new Date(year, month, 28) }
+    ];
+    
+    const demoVacations = [
+      { name: 'Summer Break', startDate: new Date(year, month, 15), endDate: new Date(year, month, 19) },
+      { name: 'Weekend Trip', startDate: new Date(year, month, 22), endDate: new Date(year, month, 24) }
+    ];
+    
+    const days = [];
+    const currentDate = new Date(startDate);
+    const today = new Date();
+    
+    // Generate 35 days (5 weeks) to fill the calendar grid
+    for (let i = 0; i < 35; i++) {
+      const isCurrentMonth = currentDate.getMonth() === month;
+      const isToday = currentDate.toDateString() === today.toDateString();
+      const dayNumber = currentDate.getDate();
+      const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
+      
+      // Check for demo events on this date
+      const hasHoliday = demoHolidays.some(holiday => 
+        holiday.date.toDateString() === currentDate.toDateString()
+      );
+      const hasVacation = demoVacations.some(vacation => 
+        currentDate >= vacation.startDate && currentDate <= vacation.endDate
+      );
+      
+      days.push({
+        dayNumber,
+        isCurrentMonth,
+        isToday,
+        isWeekend,
+        hasHoliday,
+        hasVacation,
+        holidayName: hasHoliday ? demoHolidays.find(h => h.date.toDateString() === currentDate.toDateString())?.name : null,
+        vacationName: hasVacation ? demoVacations.find(v => currentDate >= v.startDate && currentDate <= v.endDate)?.name : null
+      });
+      
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return {
+      monthName: now.toLocaleDateString('en-US', { month: 'long' }),
+      year: year,
+      days: days
+    };
+  }, []);
   return (
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16 md:py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -52,7 +113,7 @@ const ProductDemo = ({
               <div className="lg:col-span-2">
                 <div className="bg-gray-50 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-lg font-semibold text-gray-800">March 2024</h4>
+                    <h4 className="text-lg font-semibold text-gray-800">{currentMonthData.monthName} {currentMonthData.year}</h4>
                     <div className="flex space-x-2">
                       <button className="w-8 h-8 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center justify-center">
                         <span className="text-gray-600">‹</span>
@@ -68,111 +129,189 @@ const ProductDemo = ({
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
                       <div key={i} className="text-center text-gray-500 py-2 font-medium text-sm">{day}</div>
                     ))}
-                    {Array.from({length: 35}, (_, i) => {
-                      const day = i - 6; // Start from -6 to show previous month days
-                      const isCurrentMonth = day > 0 && day <= 31;
-                      const isHighlighted = [15, 16, 17, 22, 23].includes(day);
-                      const isToday = day === 16;
+                    {currentMonthData.days.map((day, i) => (
+                      <div 
+                        key={i} 
+                        className={`text-center py-2 rounded-lg text-sm transition-all duration-200 hover:scale-105 cursor-pointer relative ${
+                          !day.isCurrentMonth ? 'text-gray-300' :
+                          day.isToday ? 'bg-purple-600 text-white font-bold shadow-lg' :
+                          day.hasHoliday && day.hasVacation ? 'bg-gradient-to-br from-orange-100 to-purple-100 text-gray-800 font-semibold' :
+                          day.hasHoliday ? 'bg-orange-100 text-gray-800 font-semibold' :
+                          day.hasVacation ? 'bg-purple-100 text-gray-800 font-semibold' :
+                          day.isWeekend ? 'text-gray-400 bg-gray-50' :
+                          'text-gray-600 hover:bg-gray-100'
+                        }`}
+                        title={day.holidayName || day.vacationName || ''}
+                      >
+                        {day.isCurrentMonth ? day.dayNumber : ''}
+                        {/* Event indicators */}
+                        {day.isCurrentMonth && (day.hasHoliday || day.hasVacation) && (
+                          <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                            {day.hasHoliday && (
+                              <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" title={day.holidayName}></div>
+                            )}
+                            {day.hasVacation && (
+                              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full" title={day.vacationName}></div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* AI Analytics Preview */}
+                <div className="mt-5 bg-white rounded-2xl p-6 shadow-lg">
+                  <div className="flex items-center mb-4">
+                    <TrendingUp className="w-5 h-5 text-blue-600 mr-2" />
+                    <h4 className="font-semibold text-gray-800">AI Insights</h4>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+                      <div className="mb-2">
+                        <h4 className="font-medium text-blue-900 text-sm">Summer Break (Sep 15-19)</h4>
+                      </div>
                       
-                      return (
-                        <div 
-                          key={i} 
-                          className={`text-center py-2 rounded-lg text-sm transition-all duration-200 hover:scale-105 cursor-pointer ${
-                            !isCurrentMonth ? 'text-gray-300' :
-                            isToday ? 'bg-purple-600 text-white font-bold shadow-lg' :
-                            isHighlighted ? 'bg-purple-100 text-purple-700 font-semibold hover:bg-purple-200' :
-                            'text-gray-600 hover:bg-gray-100'
-                          }`}
-                        >
-                          {isCurrentMonth ? day : ''}
-                        </div>
-                      );
-                    })}
+                      <div className="flex items-center text-xs text-blue-700">
+                        <Plane className="w-3 h-3 mr-1" />
+                        <span>Perfect weather for Bali, Thailand</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+                      <div className="mb-2">
+                        <h4 className="font-medium text-green-900 text-sm">Long Weekend (Dec 25-27)</h4>
+                      </div>
+                      
+                      <div className="flex items-center text-xs text-green-700">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        <span>Great for Dubai, Singapore</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+                      <div className="mb-2">
+                        <h4 className="font-medium text-purple-900 text-sm">Independence Day (Aug 15)</h4>
+                      </div>
+                      
+                      <div className="flex items-center text-xs text-purple-700">
+                        <Clock className="w-3 h-3 mr-1" />
+                        <span>4-day weekend opportunity</span>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+                      <div className="mb-2">
+                        <h4 className="font-medium text-orange-900 text-sm">Team Trend</h4>
+                      </div>
+                      
+                      <div className="flex items-center text-xs text-orange-700">
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                        <span>5 colleagues planning Dec</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Right: Leave Balances & Insights */}
               <div className="space-y-6">
-                {/* Leave Balances Panel */}
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 border border-purple-200">
-                  <div className="flex items-center mb-4">
-                    <TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
-                    <h4 className="font-semibold text-gray-800">Leave Balances</h4>
+                {/* Leave Balances - Exact DashboardPreview Styling */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-bold text-lg text-gray-800 flex items-center">
+                      <TrendingUp className="w-5 h-5 text-purple-600 mr-2" />
+                      Leave Balances
+                    </h3>
                   </div>
-                  <div className="space-y-4">
-                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="text-sm font-medium text-gray-600">Earned Leave</div>
-                          <div className="text-2xl font-bold text-purple-700">12 days</div>
-                        </div>
-                        <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                          <Calendar className="w-6 h-6 text-purple-600" />
-                        </div>
+                  
+                  <div className="grid grid-cols-3 gap-3">
+                    {/* Earned Leave Card */}
+                    <div className="bg-purple-50 rounded-lg p-3 hover:shadow-md transition-shadow">
+                      <div className="text-center">
+                        <div className="text-sm font-medium text-gray-700 mb-2">Earned Leave</div>
+                        <div className="text-2xl font-bold text-purple-700">12</div>
                       </div>
                     </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="text-sm font-medium text-gray-600">Sick Leave</div>
-                          <div className="text-2xl font-bold text-green-700">8 days</div>
-                        </div>
-                        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                          <Clock className="w-6 h-6 text-green-600" />
-                        </div>
+
+                    {/* Sick Leave Card */}
+                    <div className="bg-green-50 rounded-lg p-3 hover:shadow-md transition-shadow">
+                      <div className="text-center">
+                        <div className="text-sm font-medium text-gray-700 mb-2">Sick Leave</div>
+                        <div className="text-2xl font-bold text-green-700">8</div>
                       </div>
                     </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="text-sm font-medium text-gray-600">Casual Leave</div>
-                          <div className="text-2xl font-bold text-blue-700">3 days</div>
-                        </div>
-                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Star className="w-6 h-6 text-blue-600" />
-                        </div>
+
+                    {/* Casual Leave Card */}
+                    <div className="bg-blue-50 rounded-lg p-3 hover:shadow-md transition-shadow">
+                      <div className="text-center">
+                        <div className="text-sm font-medium text-gray-700 mb-2">Casual Leave</div>
+                        <div className="text-2xl font-bold text-blue-700">3</div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Long Weekends Panel */}
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 border border-green-200">
+                {/* Long Weekend Opportunities - Exact DashboardPreview Styling */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg">
                   <div className="flex items-center mb-4">
-                    <AlertCircle className="w-5 h-5 text-green-600 mr-2" />
-                    <h4 className="font-semibold text-gray-800">Smart Insights</h4>
+                    <Calendar className="w-5 h-5 text-orange-600 mr-2" />
+                    <h4 className="font-semibold text-gray-800">Long Weekend Opportunities</h4>
                   </div>
+                  
                   <div className="space-y-3">
-                    <div className="bg-white rounded-xl p-4 shadow-sm">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-semibold text-gray-800">Long Weekend Detected!</div>
-                          <div className="text-xs text-gray-600">Mar 15-18 (4 days off)</div>
+                    <div className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-orange-900">Independence Day</h4>
+                        <div className="flex items-center text-sm text-orange-700">
+                          <Clock className="w-3 h-3 mr-1" />
+                          4 days off
                         </div>
-                        <CheckCircle className="w-5 h-5 text-green-500" />
                       </div>
+                      
+                      <div className="flex items-center text-sm text-orange-700">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        <span>Aug 15, 2025 (Friday)</span>
+                      </div>
+                      
+                      <p className="text-sm text-orange-600 mt-2 italic">
+                        "Take Monday off for a 4-day weekend!"
+                      </p>
                     </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-semibold text-gray-800">Optimal Booking</div>
-                          <div className="text-xs text-gray-600">Book flights 2 weeks early</div>
+                  </div>
+                </div>
+
+                {/* Upcoming Vacations - Exact DashboardPreview Styling */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg">
+                  <div className="flex items-center mb-4">
+                    <Plane className="w-5 h-5 text-purple-600 mr-2" />
+                    <h4 className="font-semibold text-gray-800">Upcoming Vacations</h4>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] group">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-purple-900">Summer Break</h4>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center text-sm text-purple-700">
+                            <Clock className="w-3 h-3 mr-1" />
+                            5 days
+                          </div>
+                          <span className="px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                            EL
+                          </span>
                         </div>
-                        <TrendingUp className="w-5 h-5 text-blue-500" />
                       </div>
-                    </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
-                        <div className="flex-1">
-                          <div className="text-sm font-semibold text-gray-800">Team Sync</div>
-                          <div className="text-xs text-gray-600">3 colleagues also planning leave</div>
-                        </div>
-                        <Calendar className="w-5 h-5 text-purple-500" />
+                      
+                      <div className="flex items-center text-sm text-purple-700">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        <span>Sep 15, 2025 - Sep 19, 2025</span>
                       </div>
+                      
+                      <p className="text-sm text-purple-600 mt-2 italic">
+                        "Beach vacation with family"
+                      </p>
                     </div>
                   </div>
                 </div>

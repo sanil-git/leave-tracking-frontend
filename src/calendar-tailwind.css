@@ -55,16 +55,16 @@
   font-weight: 600;
 }
 
-/* Weekend shading for better distinction */
+/* Weekend shading for better distinction - Higher priority */
 .rbc-date-cell[data-day="0"], /* Sunday */
 .rbc-date-cell[data-day="6"] { /* Saturday */
-  background: #f9fafb;
+  background: #f9fafb !important;
 }
 
 .rbc-date-cell[data-day="0"] .rbc-day-number,
 .rbc-date-cell[data-day="6"] .rbc-day-number {
-  color: #6b7280;
-  font-weight: 500;
+  color: #6b7280 !important;
+  font-weight: 500 !important;
 }
 
 /* Event date styling - Holiday dates */

@@ -232,7 +232,7 @@ const DashboardPreview = ({
           </div>
 
           {/* Long Weekend Opportunities */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center mb-4">
               <Calendar className="w-5 h-5 text-orange-600 mr-2" />
               <h4 className="font-semibold text-gray-800">Long Weekend Opportunities</h4>
@@ -245,7 +245,7 @@ const DashboardPreview = ({
                 {longWeekendOpportunities.map((holiday) => (
                   <div
                     key={holiday._id}
-                    className="p-3 bg-orange-50 border border-orange-200 rounded-lg"
+                    className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -271,9 +271,9 @@ const DashboardPreview = ({
           </div>
 
           {/* Planned Vacations */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-lg">
             <div className="flex items-center mb-4">
-              <Plane className="w-5 h-5 text-green-600 mr-2" />
+              <Plane className="w-5 h-5 text-purple-600 mr-2" />
               <h4 className="font-semibold text-gray-800">Planned Vacations</h4>
             </div>
             
@@ -284,12 +284,12 @@ const DashboardPreview = ({
                 {futureVacations.map((vacation) => (
                   <div
                     key={vacation._id}
-                    className="group p-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors duration-200 relative"
+                    className="group p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] relative"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-green-900">{vacation.name}</h4>
+                      <h4 className="font-medium text-purple-900">{vacation.name}</h4>
                       <div className="flex items-center space-x-2">
-                        <div className="flex items-center text-sm text-green-700">
+                        <div className="flex items-center text-sm text-purple-700">
                           <Clock className="w-3 h-3 mr-1" />
                           {vacation.days || vacation.duration || 'N/A'} days
                         </div>
@@ -315,11 +315,11 @@ const DashboardPreview = ({
                       </div>
                     </div>
                     
-                    <div className="flex items-center text-sm text-green-700">
+                    <div className="flex items-center text-sm text-purple-700">
                       <MapPin className="w-3 h-3 mr-1" />
                       <span 
                         onClick={() => handleDateClick(vacation.fromDate || vacation.startDate)}
-                        className="cursor-pointer hover:text-green-800 hover:underline transition-colors duration-200"
+                        className="cursor-pointer hover:text-purple-800 hover:underline transition-colors duration-200"
                         title="Click to navigate to start date"
                       >
                         {formatDate(vacation.fromDate || vacation.startDate)}
@@ -327,7 +327,7 @@ const DashboardPreview = ({
                       <span className="mx-2">-</span>
                       <span 
                         onClick={() => handleDateClick(vacation.toDate || vacation.endDate)}
-                        className="cursor-pointer hover:text-green-800 hover:underline transition-colors duration-200"
+                        className="cursor-pointer hover:text-purple-800 hover:underline transition-colors duration-200"
                         title="Click to navigate to end date"
                       >
                         {formatDate(vacation.toDate || vacation.endDate)}
@@ -335,7 +335,7 @@ const DashboardPreview = ({
                     </div>
                     
                     {vacation.description && (
-                      <p className="text-sm text-green-600 mt-2 italic">
+                      <p className="text-sm text-purple-600 mt-2 italic">
                         "{vacation.description}"
                       </p>
                     )}

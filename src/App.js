@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useTransition } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Register from './components/Register';
-import Calendar from './components/Calendar';
+import CustomCalendar from './components/CustomCalendar';
 import HolidayManagement from './components/HolidayManagement';
 import VacationForm from './components/VacationForm';
 import DashboardPreview from './components/DashboardPreview';
@@ -368,8 +368,8 @@ function App() {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 md:py-6 space-y-3 sm:space-y-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Welcome, {user.name}!
+            <h1 className="text-lg md:text-xl font-semibold text-gray-700">
+              Welcome back, {user.name}!
             </h1>
             <div className="flex items-center space-x-3 md:space-x-4 w-full sm:w-auto justify-between sm:justify-end">
               {/* Backend Status Indicator */}
@@ -397,7 +397,7 @@ function App() {
             {/* Left Column - Calendar, Vacation Form & Holiday Management */}
             <div className="space-y-4 md:space-y-6">
               {/* Calendar Section */}
-              <Calendar
+              <CustomCalendar
                 holidays={officialHolidays}
                 vacations={vacations}
                 onNavigate={navigateToDate}

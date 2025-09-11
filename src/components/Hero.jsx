@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 /**
  * Hero component - Main hero section with two-column layout, headline, CTAs, and dashboard mock
@@ -14,6 +14,56 @@ const Hero = ({
   onGetStarted,
   onSeeDemo
 }) => {
+  // Function to scroll to the ProductDemo section
+  const handleSeeDemo = () => {
+    const productDemoElement = document.getElementById('product-demo');
+    if (productDemoElement) {
+      productDemoElement.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    } else if (onSeeDemo) {
+      onSeeDemo();
+    }
+  };
+  // Generate current month calendar data
+  const currentMonthData = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    // Get first day of month and how many days to show from previous month
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay()); // Start from Sunday
+    
+    const days = [];
+    const currentDate = new Date(startDate);
+    const today = new Date();
+    
+    // Generate 35 days (5 weeks) to fill the calendar grid
+    for (let i = 0; i < 35; i++) {
+      const isCurrentMonth = currentDate.getMonth() === month;
+      const isToday = currentDate.toDateString() === today.toDateString();
+      const dayNumber = currentDate.getDate();
+      
+      days.push({
+        dayNumber,
+        isCurrentMonth,
+        isToday,
+        isWeekend: currentDate.getDay() === 0 || currentDate.getDay() === 6
+      });
+      
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return {
+      monthName: now.toLocaleDateString('en-US', { month: 'long' }),
+      year: year,
+      days: days
+    };
+  }, []);
   return (
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-12 md:py-16 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,7 +87,7 @@ const Hero = ({
                 Get Started Free
               </button>
               <button
-                onClick={onSeeDemo}
+                onClick={handleSeeDemo}
                 className="border-2 border-purple-600 text-purple-600 rounded-full px-8 py-4 font-semibold text-lg hover:bg-purple-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 min-h-[44px]"
                 aria-label="Watch a demo of PlanWise"
               >
@@ -59,7 +109,7 @@ const Hero = ({
                 {/* Calendar Header */}
                 <div className="text-center mb-4">
                   <div className="text-sm text-gray-500 mb-2">PlanWise Calendar</div>
-                  <h3 className="text-lg font-semibold text-gray-800">March 2024</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">{currentMonthData.monthName} {currentMonthData.year}</h3>
                 </div>
 
                 {/* Simple Calendar Grid */}
@@ -67,14 +117,14 @@ const Hero = ({
                   {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
                     <div key={i} className="text-center text-gray-400 py-1 font-medium text-xs">{day}</div>
                   ))}
-                  {Array.from({length: 28}, (_, i) => (
+                  {currentMonthData.days.map((day, i) => (
                     <div key={i} className={`text-center py-1 rounded text-xs ${
-                      i === 15 ? 'bg-purple-100 text-purple-700 font-semibold' :
-                      i === 16 ? 'bg-green-100 text-green-700' :
-                      i === 22 ? 'bg-orange-100 text-orange-700' :
+                      day.isToday ? 'bg-purple-600 text-white font-bold' :
+                      !day.isCurrentMonth ? 'text-gray-300' :
+                      day.isWeekend ? 'text-gray-400 bg-gray-50' :
                       'text-gray-600 hover:bg-gray-50'
                     }`}>
-                      {i + 1}
+                      {day.isCurrentMonth ? day.dayNumber : ''}
                     </div>
                   ))}
                 </div>
