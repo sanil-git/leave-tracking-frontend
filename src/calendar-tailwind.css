@@ -67,6 +67,39 @@
   font-weight: 500;
 }
 
+/* Event date styling - Holiday dates */
+.rbc-date-cell.bg-blue-50 {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  border-left: 3px solid #3b82f6 !important;
+}
+
+.rbc-date-cell.bg-blue-50 .rbc-day-number {
+  color: #1e40af;
+  font-weight: 600;
+}
+
+/* Event date styling - Vacation dates */
+.rbc-date-cell.bg-green-50 {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%) !important;
+  border-left: 3px solid #10b981 !important;
+}
+
+.rbc-date-cell.bg-green-50 .rbc-day-number {
+  color: #065f46;
+  font-weight: 600;
+}
+
+/* Event date styling - Both holiday and vacation */
+.rbc-date-cell.bg-gradient-to-br {
+  background: linear-gradient(135deg, #dbeafe 0%, #dcfce7 100%) !important;
+  border-left: 3px solid #8b5cf6 !important;
+}
+
+.rbc-date-cell.bg-gradient-to-br .rbc-day-number {
+  color: #4c1d95;
+  font-weight: 700;
+}
+
 /* Enhanced event styling with beautiful gradients */
 .rbc-event {
   border-radius: 8px;

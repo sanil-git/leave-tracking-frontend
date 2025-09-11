@@ -115,15 +115,45 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
     return { style };
   }, []);
 
-  // Custom day cell wrapper to add data-day attribute for weekend detection
+  // Custom day cell wrapper to add data-day attribute for weekend detection and event styling
   const dayCellWrapper = useCallback(({ children, value }) => {
     const dayOfWeek = value.getDay(); // 0 = Sunday, 6 = Saturday
+    
+    // Check if this date has any events
+    const dateString = value.toISOString().split('T')[0];
+    const hasHoliday = events.some(event => {
+      const eventDate = new Date(event.start);
+      return eventDate.toISOString().split('T')[0] === dateString && event.type === 'holiday';
+    });
+    const hasVacation = events.some(event => {
+      const eventDate = new Date(event.start);
+      return eventDate.toISOString().split('T')[0] === dateString && event.type === 'vacation';
+    });
+    
+    // Determine background color based on events
+    let backgroundColor = '';
+    if (hasHoliday && hasVacation) {
+      backgroundColor = 'bg-gradient-to-br from-blue-100 to-green-100'; // Both holiday and vacation
+    } else if (hasHoliday) {
+      backgroundColor = 'bg-blue-50'; // Holiday only
+    } else if (hasVacation) {
+      backgroundColor = 'bg-green-50'; // Vacation only
+    }
+    
     return (
-      <div data-day={dayOfWeek} className="rbc-date-cell">
+      <div 
+        data-day={dayOfWeek} 
+        className={`rbc-date-cell ${backgroundColor}`}
+        style={{ 
+          background: backgroundColor ? undefined : 'transparent',
+          borderLeft: hasHoliday || hasVacation ? '3px solid' : 'none',
+          borderLeftColor: hasHoliday && hasVacation ? '#8b5cf6' : hasHoliday ? '#3b82f6' : hasVacation ? '#10b981' : 'transparent'
+        }}
+      >
         {children}
       </div>
     );
-  }, []);
+  }, [events]);
 
   // Custom event component with tooltip for truncated events
   const EventComponent = useCallback(({ event }) => {
