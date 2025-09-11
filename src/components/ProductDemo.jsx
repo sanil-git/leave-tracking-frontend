@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Calendar, Clock, TrendingUp, AlertCircle, CheckCircle, Star, Plane, MapPin } from 'lucide-react';
+import { Calendar, Clock, TrendingUp, CheckCircle, Star, Plane, MapPin } from 'lucide-react';
 
 /**
  * ProductDemo component - Interactive-looking dashboard preview showing PlanWise in action

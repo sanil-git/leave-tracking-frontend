@@ -112,13 +112,13 @@ const CustomCalendar = ({
     }
   }, [onNavigate]);
 
-  // Handle view change
-  const handleViewChange = useCallback((newView) => {
-    setView(newView);
-    if (onViewChange) {
-      onViewChange(newView);
-    }
-  }, [onViewChange]);
+  // Handle view change (currently not used but kept for future functionality)
+  // const handleViewChange = useCallback((newView) => {
+  //   setView(newView);
+  //   if (onViewChange) {
+  //     onViewChange(newView);
+  //   }
+  // }, [onViewChange]);
 
   // Get day styling based on events and properties
   const getDayStyling = useCallback((dayData) => {
