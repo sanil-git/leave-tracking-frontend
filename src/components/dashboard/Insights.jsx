@@ -16,11 +16,16 @@ const Insights = ({
   onNavigateToDate,
   onUpdateLeaveBalances,
   onDeleteVacation,
-  isLoading = false
+  isLoading = false,
+  aiInsights = {},
+  aiLoading = {},
+  aiError = {}
 }) => {
   const [isEditingBalances, setIsEditingBalances] = useState(false);
   const [editingBalances, setEditingBalances] = useState(leaveBalances);
   const [isSaving, setIsSaving] = useState(false);
+  const [hoveredVacation, setHoveredVacation] = useState(null);
+  const [hoverTimeout, setHoverTimeout] = useState(null);
   
   // Intersection Observer for lazy loading
   const [showSmartInsights, setShowSmartInsights] = useState(false);
@@ -289,43 +294,109 @@ const Insights = ({
             <p className="text-gray-500 text-sm">No vacations planned yet.</p>
           ) : (
             <div className="space-y-3">
-              {futureVacations.map((vacation) => (
-                <div
-                  key={vacation._id}
-                  className="group p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] relative"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-purple-900">{vacation.name}</h4>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center text-sm text-purple-700">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {vacation.days || vacation.duration || 'N/A'} days
+              {futureVacations.map((vacation) => {
+                const vacationId = vacation._id || vacation.name;
+                const insights = aiInsights[vacationId];
+                const isLoading = aiLoading[vacationId];
+                const hasError = aiError[vacationId];
+                const score = insights?.ai_analysis?.current_destination_analysis?.score;
+                const suggestion = insights?.ai_analysis?.ai_insights?.smart_suggestion;
+                const isHovered = hoveredVacation === vacationId;
+                
+                return (
+                  <div
+                    key={vacation._id}
+                    className="group p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] relative"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-purple-900">
+                        {vacation.name}
+                        {vacation.destination && (
+                          <span className="font-medium text-purple-900"> ({vacation.destination})</span>
+                        )}
+                      </h4>
+                      <div className="flex items-center space-x-2">
+                        {/* AI Score */}
+                        {isLoading ? (
+                          <div className="w-8 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+                        ) : score ? (
+                          <div 
+                            className={`px-2 py-1 text-xs font-bold rounded-full cursor-pointer ${
+                              score >= 8 ? 'bg-green-100 text-green-800' :
+                              score >= 6 ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800'
+                            }`}
+                            title="Hover for AI suggestion"
+                            onMouseEnter={() => {
+                              if (hoverTimeout) clearTimeout(hoverTimeout);
+                              setHoveredVacation(vacationId);
+                            }}
+                            onMouseLeave={() => {
+                              const timeout = setTimeout(() => setHoveredVacation(null), 1000);
+                              setHoverTimeout(timeout);
+                            }}
+                          >
+                            {score}/10
+                          </div>
+                        ) : hasError ? (
+                          <div className="px-2 py-1 text-xs text-red-600 bg-red-50 rounded-full">
+                            Error
+                          </div>
+                        ) : null}
+                        
+                        <div className="flex items-center text-sm text-purple-700">
+                          <Clock className="w-3 h-3 mr-1" />
+                          {vacation.days || vacation.duration || 'N/A'} days
+                        </div>
+                        {vacation.leaveType && (
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            vacation.leaveType === 'EL' ? 'bg-blue-100 text-blue-800' :
+                            vacation.leaveType === 'SL' ? 'bg-green-100 text-green-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {vacation.leaveType}
+                          </span>
+                        )}
+                        {/* Delete button - only visible on hover */}
+                        {onDeleteVacation && (
+                          <button
+                            onClick={() => handleDeleteVacation(vacation._id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-md"
+                            title="Delete vacation"
+                            aria-label={`Delete vacation: ${vacation.name}`}
+                            tabIndex={0}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
-                      {vacation.leaveType && (
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          vacation.leaveType === 'EL' ? 'bg-blue-100 text-blue-800' :
-                          vacation.leaveType === 'SL' ? 'bg-green-100 text-green-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {vacation.leaveType}
-                        </span>
-                      )}
-                      {/* Delete button - only visible on hover */}
-                      {onDeleteVacation && (
-                        <button
-                          onClick={() => handleDeleteVacation(vacation._id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-md"
-                          title="Delete vacation"
-                          aria-label={`Delete vacation: ${vacation.name}`}
-                          tabIndex={0}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center text-sm text-purple-700">
+                    
+                    {/* AI Suggestion Tooltip on Hover */}
+                    {isHovered && suggestion && (
+                      <div 
+                        className="fixed text-xs text-black bg-white border border-gray-300 rounded px-2 py-1 shadow-lg"
+                        style={{
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          maxWidth: '300px',
+                          zIndex: 99999
+                        }}
+                        onMouseEnter={() => {
+                          if (hoverTimeout) clearTimeout(hoverTimeout);
+                          setHoveredVacation(vacationId);
+                        }}
+                        onMouseLeave={() => {
+                          const timeout = setTimeout(() => setHoveredVacation(null), 1000);
+                          setHoverTimeout(timeout);
+                        }}
+                      >
+                        {suggestion}
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center text-sm text-purple-700">
                     <MapPin className="w-3 h-3 mr-1" />
                     <span 
                       onClick={() => handleDateClick(vacation.fromDate || vacation.startDate)}
@@ -344,13 +415,14 @@ const Insights = ({
                     </span>
                   </div>
                   
-                  {vacation.description && (
-                    <p className="text-sm text-purple-600 mt-2 italic">
-                      "{vacation.description}"
-                    </p>
-                  )}
-                </div>
-              ))}
+                    {vacation.description && (
+                      <p className="text-sm text-purple-600 mt-2 italic">
+                        "{vacation.description}"
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

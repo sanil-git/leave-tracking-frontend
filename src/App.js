@@ -14,7 +14,7 @@ import './index.css';
 import './calendar-tailwind.css'; // Beautiful calendar styling
 
 // Move API_BASE_URL outside component to avoid dependency issues
-const API_BASE_URL = 'https://leave-tracking-backend.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://leave-tracking-backend.onrender.com';
 
 function App() {
   const { user, token, loading, login, logout, fetchUserProfile } = useAuth();
@@ -31,6 +31,12 @@ function App() {
   const [showLogin, setShowLogin] = useState(null);
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [, startHolidayTransition] = useTransition();
+  
+  // AI Insights state
+  const [aiInsights, setAiInsights] = useState({});
+  const [aiLoading, setAiLoading] = useState({});
+  const [aiError, setAiError] = useState({});
+  const [aiInsightsFetched, setAiInsightsFetched] = useState(false);
   // Loading states temporarily disabled to fix infinite loading issue
 
   // Simple fetch functions - no complex dependencies
@@ -62,6 +68,7 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setVacations(data);
+        setAiInsightsFetched(false); // Reset flag to fetch AI insights for updated vacations
       } else {
         console.error('Failed to fetch vacations:', response.status, response.statusText);
       }
@@ -114,6 +121,70 @@ function App() {
       return false; // Return false on error
     }
   }, [token]);
+
+  // AI Insights fetching function
+  const fetchAIInsights = useCallback(async () => {
+    if (!token) return;
+    
+    // Filter for future vacations with destinations
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const futureVacations = vacations.filter(vacation => {
+      const vacationDate = new Date(vacation.fromDate || vacation.startDate);
+      return vacationDate >= today && vacation.destination;
+    });
+    
+    if (futureVacations.length === 0) return;
+    
+    // Process each future vacation
+    for (const vacation of futureVacations) {
+      if (!vacation.destination || !vacation.fromDate || !vacation.toDate) continue;
+      
+      const vacationId = vacation._id || vacation.name;
+      
+      setAiLoading(prev => ({ ...prev, [vacationId]: true }));
+      setAiError(prev => ({ ...prev, [vacationId]: null }));
+      
+      try {
+        // 5 second timeout to prevent getting stuck
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch(`${API_BASE_URL}/api/vacation-insights`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            startDate: vacation.fromDate,
+            endDate: vacation.toDate,
+            destination: vacation.destination,
+            vacationName: vacation.name
+          }),
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setAiInsights(prev => ({ ...prev, [vacationId]: data }));
+        } else {
+          setAiError(prev => ({ ...prev, [vacationId]: 'Failed to get AI insights' }));
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          setAiError(prev => ({ ...prev, [vacationId]: 'Request timed out (5s)' }));
+        } else {
+          setAiError(prev => ({ ...prev, [vacationId]: 'AI service unavailable' }));
+        }
+        console.error('AI insights error:', err);
+      } finally {
+        setAiLoading(prev => ({ ...prev, [vacationId]: false }));
+      }
+    }
+  }, [token, vacations]);
 
   // Memoized holiday operation functions
   const handleAddHoliday = useCallback(async (holidayData) => {
@@ -203,6 +274,18 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, token]);
+
+  // Fetch AI insights when vacations change (with debounce)
+  useEffect(() => {
+    if (vacations.length > 0 && !aiInsightsFetched) {
+      const timeoutId = setTimeout(() => {
+        fetchAIInsights();
+        setAiInsightsFetched(true);
+      }, 2000); // 2 second debounce to prevent rapid calls
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [vacations.length]); // Remove aiInsightsFetched from dependencies
 
 
   if (loading) {
@@ -412,7 +495,9 @@ function App() {
                 holidays={officialHolidays}
                 onAddVacation={async (vacationData) => {
                   try {
-                    console.log('Submitting vacation:', vacationData);
+                    console.log('🚀 FRONTEND: Submitting vacation:', vacationData);
+                    console.log('🌐 FRONTEND: API URL:', `${API_BASE_URL}/vacations`);
+                    console.log('📤 FRONTEND: Request body:', JSON.stringify(vacationData));
                     
                     const response = await fetch(`${API_BASE_URL}/vacations`, {
                       method: 'POST',
@@ -422,6 +507,8 @@ function App() {
                       },
                       body: JSON.stringify(vacationData)
                     });
+                    
+                    console.log('📡 FRONTEND: Response status:', response.status, response.statusText);
                     
                     if (response.ok) {
                       const newVacation = await response.json();
@@ -482,6 +569,9 @@ function App() {
                 leaveBalances={leaveBalances}
                 onNavigateToDate={navigateToDate}
                 isLoading={false}
+                aiInsights={aiInsights}
+                aiLoading={aiLoading}
+                aiError={aiError}
                 onDeleteVacation={async (vacationId) => {
                   try {
                     const vacationToDelete = vacations.find(v => v._id === vacationId);

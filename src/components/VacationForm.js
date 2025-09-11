@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, Clock, User, TrendingUp } from 'lucide-react';
+import { Calendar, Clock, User, TrendingUp, MapPin } from 'lucide-react';
 
 const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], holidays = [] }) => {
   const [name, setName] = useState('');
+  const [destination, setDestination] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [leaveType, setLeaveType] = useState('EL');
@@ -71,7 +72,7 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!name.trim() || !startDate || !endDate) {
+    if (!name.trim() || !destination.trim() || !startDate || !endDate) {
       alert('Please fill in all required fields');
       return;
     }
@@ -110,6 +111,7 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
 
     onAddVacation({
       name: name.trim(),
+      destination: destination.trim(),
       fromDate: startDate,
       toDate: endDate,
       days: workingDays, // Use working days for leave balance deduction
@@ -119,6 +121,7 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
 
     // Reset form
     setName('');
+    setDestination('');
     setStartDate('');
     setEndDate('');
     setLeaveType('EL');
@@ -138,7 +141,7 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
   return (
     <div className="bg-white rounded-lg shadow p-4">
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label htmlFor="vacationName" className="block text-sm font-medium text-gray-700 mb-1">
               Vacation Name
@@ -154,6 +157,34 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
                 placeholder="e.g., Summer Vacation"
                 required
               />
+            </div>
+          </div>
+          
+          <div>
+            <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-1">
+              Destination
+            </label>
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <select
+                id="destination"
+                value={destination}
+                onChange={(e) => setDestination(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                required
+              >
+                <option value="">Select destination</option>
+                <option value="Goa">Goa</option>
+                <option value="Kerala">Kerala</option>
+                <option value="Manali">Manali</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Kashmir">Kashmir</option>
+                <option value="Andaman">Andaman</option>
+                <option value="Leh Ladakh">Leh Ladakh</option>
+                <option value="Rishikesh">Rishikesh</option>
+                <option value="Darjeeling">Darjeeling</option>
+                <option value="Coorg">Coorg</option>
+              </select>
             </div>
           </div>
           

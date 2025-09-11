@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       const currentToken = token; // capture token at call time to avoid race on logout
-      const response = await fetch('https://leave-tracking-backend.onrender.com/auth/profile', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://leave-tracking-backend.onrender.com'}/auth/profile`, {
         headers: {
           'Authorization': `Bearer ${currentToken}`
         }
@@ -37,16 +37,16 @@ export const AuthProvider = ({ children }) => {
         }
         const userData = await response.json();
         setUser(userData);
-      } else {
+      } else if (response.status === 401) {
+        // Only logout on 401 Unauthorized (invalid token)
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
       }
+      // For other errors (network, 500, etc), keep user logged in
     } catch (error) {
       console.error('Error fetching user profile:', error);
-      localStorage.removeItem('token');
-      setToken(null);
-      setUser(null);
+      // Don't logout on network errors - keep user logged in
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('https://leave-tracking-backend.onrender.com/auth/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://leave-tracking-backend.onrender.com'}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await fetch('https://leave-tracking-backend.onrender.com/auth/register', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://leave-tracking-backend.onrender.com'}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

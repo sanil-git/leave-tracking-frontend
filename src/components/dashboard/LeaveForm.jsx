@@ -13,7 +13,7 @@ const LeaveForm = ({
   onAddVacation 
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-6" data-vacation-planner>
       <div className="flex items-center mb-6">
         <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
           <OptimizedIcon name="beach" size={20} color="#9333ea" />

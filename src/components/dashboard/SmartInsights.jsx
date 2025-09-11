@@ -1,11 +1,25 @@
-import React from 'react';
-import { Bell, CheckCircle, TrendingUp, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, CheckCircle, TrendingUp, Users, MapPin, Loader2 } from 'lucide-react';
 
 /**
  * SmartInsights - AI-powered insights component (lazy-loaded)
  * Shows intelligent recommendations and trends
  */
-const SmartInsights = ({ leaveBalances, holidays, vacations }) => {
+const SmartInsights = ({ leaveBalances, holidays, vacations, aiInsights = {}, aiLoading = {}, aiError = {} }) => {
+  
+  // Filter for future vacations only (for AI insights)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Start of today
+  
+  const futureVacations = vacations?.filter(vacation => {
+    const startDate = new Date(vacation.fromDate || vacation.startDate);
+    return startDate >= today && vacation.destination; // Only vacations WITH destinations
+  }) || [];
+  
+  // Only show destination insights if there are future vacations
+  const showDestinationInsights = futureVacations.length > 0;
+  
+  
   return (
     <div className="bg-white rounded-2xl p-6 shadow-lg">
       <div className="flex items-center mb-4">
@@ -22,7 +36,7 @@ const SmartInsights = ({ leaveBalances, holidays, vacations }) => {
               <CheckCircle className="w-5 h-5 text-emerald-600" />
             </div>
           </div>
-          <p className="text-sm text-emerald-700">Mar 15-18 (4 days off)</p>
+          <p className="text-sm text-emerald-700">Check for upcoming long weekends</p>
         </div>
 
         {/* Optimal Booking - Indigo theme */}
@@ -33,7 +47,7 @@ const SmartInsights = ({ leaveBalances, holidays, vacations }) => {
               <TrendingUp className="w-5 h-5 text-indigo-600" />
             </div>
           </div>
-          <p className="text-sm text-indigo-700">Book flights 2 weeks early</p>
+          <p className="text-sm text-indigo-700">Optimal booking recommendations</p>
         </div>
 
         {/* Team Sync - Violet theme */}
@@ -44,8 +58,10 @@ const SmartInsights = ({ leaveBalances, holidays, vacations }) => {
               <Users className="w-5 h-5 text-violet-600" />
             </div>
           </div>
-          <p className="text-sm text-violet-700">3 colleagues also planning leave</p>
+          <p className="text-sm text-violet-700">Team coordination insights</p>
         </div>
+
+
       </div>
     </div>
   );
