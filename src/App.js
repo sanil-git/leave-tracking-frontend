@@ -16,6 +16,13 @@ const API_BASE_URL = 'https://leave-tracking-backend.onrender.com';
 
 function App() {
   const { user, token, loading, login, logout, fetchUserProfile } = useAuth();
+  
+  // Reset showLogin state when user logs out
+  useEffect(() => {
+    if (!user && !loading) {
+      setShowLogin(null);
+    }
+  }, [user, loading]);
   const [officialHolidays, setOfficialHolidays] = useState([]);
   const [vacations, setVacations] = useState([]);
   const [leaveBalances, setLeaveBalances] = useState({});
@@ -196,7 +203,15 @@ function App() {
   }, [user, token]);
 
   // Debug: Log current state
-  console.log('App state:', { loading, user: user?.name, showLogin, hasToken: !!token });
+  console.log('App state:', { 
+    loading, 
+    user: user?.name, 
+    showLogin, 
+    hasToken: !!token,
+    willShowHome: !user && showLogin === null,
+    willShowLogin: !user && showLogin === true,
+    willShowRegister: !user && showLogin === false
+  });
 
   if (loading) {
     return (
