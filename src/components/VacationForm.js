@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Plane, Calendar, Clock, User, TrendingUp } from 'lucide-react';
 
-const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) => {
+const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], holidays = [] }) => {
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -29,6 +29,35 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) 
     return diffDays + 1; // Include both start and end dates
   };
 
+  // Calculate working days excluding weekends and holidays
+  const calculateWorkingDays = (start, end) => {
+    if (!start || !end) return 0;
+    
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const holidayDates = holidays.map(holiday => new Date(holiday.date).toDateString());
+    
+    let workingDays = 0;
+    const currentDate = new Date(startDate);
+    
+    while (currentDate <= endDate) {
+      const dayOfWeek = currentDate.getDay();
+      const dateString = currentDate.toDateString();
+      
+      // Skip weekends (Saturday = 6, Sunday = 0)
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        // Skip holidays
+        if (!holidayDates.includes(dateString)) {
+          workingDays++;
+        }
+      }
+      
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return workingDays;
+  };
+
   const handleStartDateChange = (e) => {
     const newStartDate = e.target.value;
     setStartDate(newStartDate);
@@ -52,12 +81,13 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) 
       return;
     }
 
-    const duration = calculateDuration(startDate, endDate);
+    const totalDays = calculateDuration(startDate, endDate);
+    const workingDays = calculateWorkingDays(startDate, endDate);
     
-    // Check if user has enough leave balance
+    // Check if user has enough leave balance (use working days for balance check)
     const currentBalance = leaveBalances?.[leaveType] || 0;
-    if (duration > currentBalance) {
-      alert(`Insufficient ${leaveType} balance. You have ${currentBalance} days but requesting ${duration} days.`);
+    if (workingDays > currentBalance) {
+      alert(`Insufficient ${leaveType} balance. You have ${currentBalance} days but requesting ${workingDays} working days (${totalDays} total days including weekends/holidays).`);
       return;
     }
 
@@ -82,7 +112,8 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) 
       name: name.trim(),
       fromDate: startDate,
       toDate: endDate,
-      days: duration,
+      days: workingDays, // Use working days for leave balance deduction
+      totalDays: totalDays, // Store total days for display
       leaveType: leaveType
     });
 
@@ -93,9 +124,10 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) 
     setLeaveType('EL');
   };
 
-  const duration = calculateDuration(startDate, endDate);
+  const totalDays = calculateDuration(startDate, endDate);
+  const workingDays = calculateWorkingDays(startDate, endDate);
   const currentBalance = leaveBalances?.[leaveType] || 0;
-  const remainingBalance = currentBalance - duration;
+  const remainingBalance = currentBalance - workingDays;
 
   // Get today's date in YYYY-MM-DD format for min attribute
   const today = new Date().toISOString().split('T')[0];
@@ -156,9 +188,9 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) 
             </label>
             <button
               type="submit"
-              disabled={duration > currentBalance}
+              disabled={workingDays > currentBalance}
               className={`w-full px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm font-medium ${
-                duration > currentBalance
+                workingDays > currentBalance
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-green-600 text-white hover:bg-green-700'
               }`}
@@ -208,11 +240,18 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [] }) 
           </div>
         </div>
 
-        {duration > 0 && (
+        {totalDays > 0 && (
           <div className="flex items-center justify-between p-2 bg-gray-50 rounded-md text-sm">
             <div className="flex items-center text-gray-700">
               <Clock className="w-4 h-4 mr-2 text-gray-500" />
-              <span><strong>{duration} day{duration !== 1 ? 's' : ''}</strong></span>
+              <div className="flex flex-col">
+                <span><strong>{workingDays} working day{workingDays !== 1 ? 's' : ''}</strong> (leave balance)</span>
+                {totalDays !== workingDays && (
+                  <span className="text-xs text-gray-500">
+                    {totalDays} total days (includes {totalDays - workingDays} weekend/holiday{totalDays - workingDays !== 1 ? 's' : ''})
+                  </span>
+                )}
+              </div>
             </div>
             <div className={`px-2 py-1 rounded-full text-xs font-medium ${
               remainingBalance >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

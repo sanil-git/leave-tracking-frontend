@@ -410,6 +410,7 @@ function App() {
               <VacationForm
                 leaveBalances={leaveBalances}
                 existingVacations={vacations}
+                holidays={officialHolidays}
                 onAddVacation={async (vacationData) => {
                   try {
                     console.log('Submitting vacation:', vacationData);
