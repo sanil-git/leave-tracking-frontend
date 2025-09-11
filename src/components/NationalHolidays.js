@@ -199,17 +199,14 @@ const NationalHolidays = memo(({ onAddHoliday, API_BASE_URL, token, existingHoli
       <button
         ref={tabButtonRef}
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`px-4 py-2.5 flex items-center space-x-2.5 transition-all duration-300 rounded-lg border-2 font-medium text-sm ${
+        className={`w-full flex items-center justify-center px-4 py-2 md:py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 transition-all duration-300 border ${
           isExpanded 
-            ? 'bg-orange-500 border-orange-500 text-white shadow-lg shadow-orange-200' 
-            : 'bg-white border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300 hover:shadow-md'
+            ? 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300' 
+            : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300'
         }`}
       >
-        <span className="text-base">🇮🇳</span>
-        <span>Official Indian Holidays</span>
-        <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-          isExpanded ? 'bg-white' : 'bg-orange-400'
-        }`}></div>
+        <span>Official Holidays:</span>
+        <span>🇮🇳</span>
       </button>
 
       {/* Expandable Content */}

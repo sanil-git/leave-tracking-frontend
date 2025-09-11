@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plane, Calendar, Clock, User, TrendingUp } from 'lucide-react';
+import { Calendar, Clock, User, TrendingUp } from 'lucide-react';
 
 const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], holidays = [] }) => {
   const [name, setName] = useState('');
@@ -137,11 +137,6 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
 
   return (
     <div className="bg-white rounded-lg shadow p-4">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-        <Plane className="w-5 h-5 mr-2 text-green-600" />
-        Request Vacation
-      </h3>
-      
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -189,10 +184,10 @@ const VacationForm = ({ onAddVacation, leaveBalances, existingVacations = [], ho
             <button
               type="submit"
               disabled={workingDays > currentBalance}
-              className={`w-full px-6 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm font-medium ${
+              className={`w-full flex items-center justify-center px-4 py-2 md:py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
                 workingDays > currentBalance
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-green-600 text-white hover:bg-green-700'
+                  : 'bg-purple-600 text-white hover:bg-purple-700'
               }`}
             >
               Submit

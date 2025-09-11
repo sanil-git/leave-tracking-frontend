@@ -207,8 +207,10 @@ const CustomCalendar = ({
               }}
               className="p-3 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-200 hover:shadow-sm touch-manipulation"
               title="Previous Month"
+              aria-label="Go to previous month"
+              tabIndex={0}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
             </button>
             
             <button
@@ -218,6 +220,8 @@ const CustomCalendar = ({
               }}
               className="px-6 py-3 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-all duration-200 hover:shadow-sm transform hover:scale-105 text-sm md:text-base touch-manipulation"
               title="Go to Today"
+              aria-label="Navigate to current date"
+              tabIndex={0}
             >
               Today
             </button>
@@ -229,8 +233,10 @@ const CustomCalendar = ({
               }}
               className="p-3 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-200 hover:shadow-sm touch-manipulation"
               title="Next Month"
+              aria-label="Go to next month"
+              tabIndex={0}
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -263,6 +269,15 @@ const CustomCalendar = ({
                 onClick={() => {
                   // Handle date click if needed
                   // Date click functionality can be added here
+                }}
+                role="button"
+                tabIndex={dayData.isCurrentMonth ? 0 : -1}
+                aria-label={`${dayData.isCurrentMonth ? '' : 'Previous/Next month, '}${dayData.dayNumber}${dayData.isToday ? ', today' : ''}${getDateEvents(dayData.date).holidays.length > 0 ? ', holiday' : ''}${getDateEvents(dayData.date).vacations.length > 0 ? ', vacation planned' : ''}`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    // Handle date click if needed
+                  }
                 }}
               >
                 <div className="text-center font-semibold">

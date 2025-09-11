@@ -1,6 +1,5 @@
 import React, { useState, useMemo, memo } from 'react';
-import { Plus, Trash2, Calendar, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
-import NationalHolidays from './NationalHolidays';
+import { Plus, Trash2, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 
 const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_BASE_URL, token, isLoading = false }) => {
   const [name, setName] = useState('');
@@ -61,20 +60,6 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center justify-between">
-        <div className="flex items-center">
-          <Calendar className="w-5 h-5 mr-2 text-blue-600" />
-          Holiday Management
-        </div>
-        
-        {/* Official Indian Holidays Tab - Inline */}
-        <NationalHolidays 
-          onAddHoliday={onAddHoliday}
-          API_BASE_URL={API_BASE_URL}
-          token={token}
-          existingHolidays={holidays}
-        />
-      </h3>
       
       {/* Add Holiday Form */}
       <form onSubmit={handleSubmit} className="mb-4 md:mb-6">
@@ -111,7 +96,7 @@ const HolidayManagement = memo(({ holidays, onAddHoliday, onDeleteHoliday, API_B
           <div className="flex items-end">
             <button
               type="submit"
-              className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="w-full flex items-center justify-center px-4 py-2 md:py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Holiday

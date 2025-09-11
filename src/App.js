@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useTransition } from 'react';
 import { useAuth } from './contexts/AuthContext';
 import Register from './components/Register';
-import CustomCalendar from './components/CustomCalendar';
-import HolidayManagement from './components/HolidayManagement';
-import VacationForm from './components/VacationForm';
-import DashboardPreview from './components/DashboardPreview';
 import Header from './components/Header';
 import Home from './pages/Home';
+// New modular dashboard components
+import Calendar from './components/dashboard/Calendar';
+import LeaveForm from './components/dashboard/LeaveForm';
+import HolidayManager from './components/dashboard/HolidayManager';
+import Insights from './components/dashboard/Insights';
+import SkipNavigation from './components/ui/SkipNavigation';
 import './App.css';
 import './index.css';
 import './calendar-tailwind.css'; // Beautiful calendar styling
@@ -274,6 +276,8 @@ function App() {
                               required
                               className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               placeholder="Enter your email"
+                              aria-describedby="email-help"
+                              autoComplete="email"
                             />
                           </div>
                         </div>
@@ -289,6 +293,8 @@ function App() {
                               required
                               className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                               placeholder="Enter your password"
+                              aria-describedby="password-help"
+                              autoComplete="current-password"
                             />
                           </div>
                         </div>
@@ -296,6 +302,7 @@ function App() {
                           <button
                             type="submit"
                             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            aria-label="Sign in to your account"
                           >
                             Sign in
                           </button>
@@ -354,7 +361,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <SkipNavigation />
+      <header id="navigation" className="bg-white shadow-sm border-b border-gray-200" role="banner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 md:py-6 space-y-3 sm:space-y-0">
             <h1 className="text-lg md:text-xl font-semibold text-gray-700">
@@ -369,6 +377,8 @@ function App() {
               <button
                 onClick={logout}
                 className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-3 md:px-4 rounded text-sm md:text-base"
+                aria-label="Sign out of your account"
+                tabIndex={0}
               >
                 Logout
               </button>
@@ -379,35 +389,30 @@ function App() {
 
       {/* Data Loading Progress Bar - Temporarily disabled */}
 
-      <main id="main-content" className="max-w-7xl mx-auto py-4 md:py-6 px-4 sm:px-6 lg:px-8">
+      <main id="main-content" className="max-w-7xl mx-auto py-4 md:py-6 px-4 sm:px-6 lg:px-8" role="main">
         <div className="py-4 md:py-6">
           {/* Responsive Layout - Single column on mobile, two columns on desktop */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
             {/* Left Column - Calendar, Vacation Form & Holiday Management */}
-            <div className="space-y-4 md:space-y-6">
+            <section className="space-y-4 md:space-y-6" aria-label="Calendar and leave management">
               {/* Calendar Section */}
-              <CustomCalendar
+              <Calendar
                 holidays={officialHolidays}
                 vacations={vacations}
-                onNavigate={navigateToDate}
                 currentDate={calendarDate}
+                onNavigate={navigateToDate}
                 onViewChange={handleCalendarViewChange}
                 isLoading={false}
               />
 
-              {/* Vacation Form Section */}
-              <VacationForm
+              {/* Leave Form Section */}
+              <LeaveForm
                 leaveBalances={leaveBalances}
                 existingVacations={vacations}
                 holidays={officialHolidays}
                 onAddVacation={async (vacationData) => {
                   try {
                     console.log('Submitting vacation:', vacationData);
-                    console.log('Request URL:', `${API_BASE_URL}/vacations`);
-                    console.log('Request headers:', {
-                      'Content-Type': 'application/json',
-                      'Authorization': `Bearer ${token}`
-                    });
                     
                     const response = await fetch(`${API_BASE_URL}/vacations`, {
                       method: 'POST',
@@ -424,9 +429,6 @@ function App() {
                       
                       // Update leave balance based on vacation type
                       const { leaveType, days } = vacationData;
-                      console.log(`Deducting ${days} days from ${leaveType} balance`);
-                      
-                      // Calculate new balance
                       const newBalance = Math.max(0, leaveBalances[leaveType] - days);
                       
                       // Update leave balance in database
@@ -441,25 +443,19 @@ function App() {
                         });
                         
                         if (balanceResponse.ok) {
-                          // Update local state after successful database update
                           setLeaveBalances(prev => ({
                             ...prev,
                             [leaveType]: newBalance
                           }));
-                          console.log(`${leaveType} balance updated in database: ${newBalance}`);
-                        } else {
-                          console.error(`Failed to update ${leaveType} balance in database`);
                         }
                       } catch (error) {
                         console.error(`Error updating ${leaveType} balance:`, error);
                       }
                       
-                      // Refresh vacations
                       fetchVacations();
                     } else {
                       const errorText = await response.text();
-                      console.error('Failed to add vacation:', response.status, response.statusText);
-                      console.error('Error response body:', errorText);
+                      console.error('Failed to add vacation:', response.status, errorText);
                     }
                   } catch (error) {
                     console.error('Error adding vacation:', error);
@@ -468,7 +464,7 @@ function App() {
               />
 
               {/* Holiday Management Section */}
-              <HolidayManagement
+              <HolidayManager
                 holidays={officialHolidays}
                 API_BASE_URL={API_BASE_URL}
                 token={token}
@@ -476,12 +472,11 @@ function App() {
                 onDeleteHoliday={handleDeleteHoliday}
                 isLoading={false}
               />
-            </div>
+            </section>
 
-            {/* Right Column - Dashboard Preview */}
-            <div className="space-y-4 md:space-y-6">
-              {/* Dashboard Preview Section */}
-              <DashboardPreview
+            {/* Right Column - Insights Dashboard */}
+            <section className="space-y-4 md:space-y-6" aria-label="Dashboard insights and analytics">
+              <Insights
                 holidays={officialHolidays}
                 vacations={vacations}
                 leaveBalances={leaveBalances}
@@ -489,9 +484,6 @@ function App() {
                 isLoading={false}
                 onDeleteVacation={async (vacationId) => {
                   try {
-                    console.log('Deleting vacation:', vacationId);
-                    
-                    // Find the vacation to get its details before deleting
                     const vacationToDelete = vacations.find(v => v._id === vacationId);
                     if (!vacationToDelete) {
                       throw new Error('Vacation not found');
@@ -505,14 +497,11 @@ function App() {
                     });
                     
                     if (response.ok) {
-                      console.log('Vacation deleted successfully');
-                      
                       // Restore leave balance
                       const { leaveType, days } = vacationToDelete;
                       const currentBalance = leaveBalances[leaveType] || 0;
                       const newBalance = currentBalance + days;
                       
-                      // Update leave balance in database
                       try {
                         const balanceResponse = await fetch(`${API_BASE_URL}/leave-balances/${leaveType}`, {
                           method: 'PUT',
@@ -524,24 +513,18 @@ function App() {
                         });
                         
                         if (balanceResponse.ok) {
-                          // Update local state after successful database update
                           setLeaveBalances(prev => ({
                             ...prev,
                             [leaveType]: newBalance
                           }));
-                          console.log(`${leaveType} balance restored: ${newBalance}`);
-                        } else {
-                          console.error(`Failed to restore ${leaveType} balance in database`);
                         }
                       } catch (error) {
                         console.error(`Error restoring ${leaveType} balance:`, error);
                       }
                       
-                      // Refresh vacations list
                       fetchVacations();
                     } else {
                       const errorText = await response.text();
-                      console.error('Failed to delete vacation:', response.status, errorText);
                       throw new Error(`Failed to delete vacation: ${response.status} - ${errorText}`);
                     }
                   } catch (error) {
@@ -551,17 +534,9 @@ function App() {
                 }}
                 onUpdateLeaveBalances={async (newBalances) => {
                   try {
-                    console.log('Updating leave balances:', newBalances);
-                    
-                    // Update each leave balance type in the database
-                    console.log('Starting database updates for leave balances...');
-                    
-                    // Only update changed fields to reduce API calls
                     const updatePromises = Object.entries(newBalances).filter(([type, balance]) => {
                       return leaveBalances[type] !== balance;
                     }).map(async ([type, balance]) => {
-                      console.log(`Updating ${type} balance to ${balance}...`);
-                      
                       const response = await fetch(`${API_BASE_URL}/leave-balances/${type}`, {
                         method: 'PUT',
                         headers: {
@@ -571,35 +546,22 @@ function App() {
                         body: JSON.stringify({ balance })
                       });
                       
-                      console.log(`${type} update response status:`, response.status);
-                      
                       if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error(`${type} update failed:`, response.status, errorText);
-                        throw new Error(`Failed to update ${type} balance: ${response.status} - ${errorText}`);
+                        throw new Error(`Failed to update ${type} balance`);
                       }
                       
-                      const result = await response.json();
-                      console.log(`${type} update successful:`, result);
-                      return result;
+                      return response.json();
                     });
                     
-                    console.log('Waiting for all updates to complete...');
                     await Promise.all(updatePromises);
-                    
-                    // Update local state after successful database update
                     setLeaveBalances(newBalances);
-                    console.log('All leave balances updated successfully in database');
-                    
                   } catch (error) {
                     console.error('Error updating leave balances:', error);
-                    // Revert to previous state if update fails
-                    console.log('Reverting to previous state...');
                     fetchLeaveBalances();
                   }
                 }}
               />
-            </div>
+            </section>
           </div>
         </div>
       </main>
