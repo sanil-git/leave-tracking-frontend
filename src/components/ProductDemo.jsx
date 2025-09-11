@@ -73,7 +73,7 @@ const ProductDemo = ({
     };
   }, []);
   return (
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16 md:py-20 lg:py-24">
+    <div className="bg-gradient-to-br from-purple-50 to-pink-50 py-16 md:py-20 lg:py-24" id="product-demo">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
@@ -86,7 +86,7 @@ const ProductDemo = ({
         </div>
 
         {/* Interactive Dashboard Preview */}
-        <div className="relative scroll-animate" id="product-demo">
+        <div className="relative scroll-animate">
           {/* Main Dashboard Card */}
           <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-8 lg:p-10 max-w-6xl mx-auto">
             {/* Dashboard Header */}
