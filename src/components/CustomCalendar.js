@@ -9,7 +9,8 @@ const CustomCalendar = ({
   onViewChange, 
   isLoading = false 
 }) => {
-  const [view, setView] = useState('month');
+  // const [view, setView] = useState('month'); // Currently not used
+  const view = 'month'; // Fixed to month view for now
   
   // Use currentDate from parent, fallback to current date if not provided
   const date = useMemo(() => {
