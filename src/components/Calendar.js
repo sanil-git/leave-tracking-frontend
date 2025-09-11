@@ -184,11 +184,11 @@ const Calendar = memo(({ holidays, vacations, onNavigate, currentDate, onViewCha
   return (
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-2xl p-6" style={{ minHeight: '500px' }}>
       {/* Beautiful Header Section */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm">
+      <div className="bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-200 rounded-2xl p-6 mb-6 shadow-sm">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center shadow-sm">
-              <CalendarIcon className="w-7 h-7 text-purple-600" />
+            <div className="w-12 h-12 bg-white/60 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-sm">
+              <CalendarIcon className="w-7 h-7 text-purple-700" />
             </div>
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
