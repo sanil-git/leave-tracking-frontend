@@ -25,7 +25,6 @@ const Insights = ({
   const [editingBalances, setEditingBalances] = useState(leaveBalances);
   const [isSaving, setIsSaving] = useState(false);
   const [hoveredVacation, setHoveredVacation] = useState(null);
-  const [hoverTimeout, setHoverTimeout] = useState(null);
   
   // Intersection Observer for lazy loading
   const [showSmartInsights, setShowSmartInsights] = useState(false);
@@ -318,7 +317,7 @@ const Insights = ({
                       <div className="flex items-center space-x-2">
                         {/* AI Score */}
                         {isLoading ? (
-                          <div className="w-8 h-6 bg-gray-200 rounded-full animate-pulse"></div>
+                          <div className="w-8 h-6 bg-gray-200 rounded-full"></div>
                         ) : score ? (
                           <div 
                             className={`px-2 py-1 text-xs font-bold rounded-full cursor-pointer ${
@@ -328,15 +327,13 @@ const Insights = ({
                             }`}
                             title="Hover for AI suggestion"
                             onMouseEnter={() => {
-                              if (hoverTimeout) clearTimeout(hoverTimeout);
                               setHoveredVacation(vacationId);
                             }}
                             onMouseLeave={() => {
-                              const timeout = setTimeout(() => setHoveredVacation(null), 1000);
-                              setHoverTimeout(timeout);
+                              setHoveredVacation(null);
                             }}
                           >
-                            {score}/10
+                            {parseFloat(score).toFixed(1)}/10
                           </div>
                         ) : hasError ? (
                           <div className="px-2 py-1 text-xs text-red-600 bg-red-50 rounded-full">
@@ -375,21 +372,19 @@ const Insights = ({
                     {/* AI Suggestion Tooltip on Hover */}
                     {isHovered && suggestion && (
                       <div 
-                        className="fixed text-xs text-black bg-white border border-gray-300 rounded px-2 py-1 shadow-lg"
+                        className="absolute text-xs text-black bg-white border border-gray-300 rounded px-2 py-1 shadow-lg"
                         style={{
-                          top: '50%',
+                          top: '-40px',
                           left: '50%',
-                          transform: 'translate(-50%, -50%)',
+                          transform: 'translateX(-50%)',
                           maxWidth: '300px',
                           zIndex: 99999
                         }}
                         onMouseEnter={() => {
-                          if (hoverTimeout) clearTimeout(hoverTimeout);
                           setHoveredVacation(vacationId);
                         }}
                         onMouseLeave={() => {
-                          const timeout = setTimeout(() => setHoveredVacation(null), 1000);
-                          setHoverTimeout(timeout);
+                          setHoveredVacation(null);
                         }}
                       >
                         {suggestion}

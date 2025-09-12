@@ -37,16 +37,24 @@ function App() {
   const [aiLoading, setAiLoading] = useState({});
   const [aiError, setAiError] = useState({});
   const [aiInsightsFetched, setAiInsightsFetched] = useState(false);
+  const [initialDataFetched, setInitialDataFetched] = useState(false);
   // Loading states temporarily disabled to fix infinite loading issue
 
   // Simple fetch functions - no complex dependencies
   const fetchOfficialHolidays = useCallback(async () => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(`${API_BASE_URL}/holidays`, {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
       if (response.ok) {
         const data = await response.json();
         setOfficialHolidays(data);
@@ -60,15 +68,27 @@ function App() {
   
   const fetchVacations = useCallback(async () => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(`${API_BASE_URL}/vacations`, {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       if (response.ok) {
         const data = await response.json();
+        const previousVacations = vacations;
         setVacations(data);
-        setAiInsightsFetched(false); // Reset flag to fetch AI insights for updated vacations
+        
+        // Only reset AI flag if vacations actually changed (different length or content)
+        if (previousVacations.length !== data.length || 
+            JSON.stringify(previousVacations.map(v => v._id)) !== JSON.stringify(data.map(v => v._id))) {
+          setAiInsightsFetched(false);
+        }
       } else {
         console.error('Failed to fetch vacations:', response.status, response.statusText);
       }
@@ -86,11 +106,17 @@ function App() {
         return false; // Return false when no token
       }
       
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(`${API_BASE_URL}/leave-balances`, {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       if (response.ok) {
         const data = await response.json();
@@ -265,15 +291,16 @@ function App() {
 
   // Load all data in parallel - simplified without loading states
   useEffect(() => {
-    if (user && token) {
+    if (user && token && !initialDataFetched) {
       // Simply run the API calls without loading states
       fetchUserProfile();
       fetchOfficialHolidays();
       fetchVacations();
       fetchLeaveBalances();
+      setInitialDataFetched(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, token]);
+  }, [user, token, initialDataFetched]);
 
   // Fetch AI insights when vacations change (with debounce)
   useEffect(() => {
@@ -285,7 +312,7 @@ function App() {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [vacations.length, aiInsightsFetched, fetchAIInsights]);
+  }, [vacations.length, aiInsightsFetched]);
 
 
   if (loading) {
