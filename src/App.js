@@ -354,6 +354,36 @@ function App() {
     }
   }, [token, vacations]);
 
+  // Handle updating leave balances (used by onboarding and vacation planner)
+  const handleUpdateLeaveBalances = async (newBalances) => {
+    try {
+      const updatePromises = Object.entries(newBalances).filter(([type, balance]) => {
+        return leaveBalances[type] !== balance;
+      }).map(async ([type, balance]) => {
+        const response = await fetch(`${API_BASE_URL}/leave-balances/${type}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ balance })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to update ${type} balance`);
+        }
+        
+        return response.json();
+      });
+      
+      await Promise.all(updatePromises);
+      setLeaveBalances(newBalances);
+    } catch (error) {
+      console.error('Error updating leave balances:', error);
+      fetchLeaveBalances();
+    }
+  };
+
   // Onboarding handlers
   const handleOnboardingComplete = async (balances) => {
     // Save balances
@@ -1075,34 +1105,7 @@ function App() {
                     throw error;
                   }
                 }}
-                onUpdateLeaveBalances={async (newBalances) => {
-                  try {
-                    const updatePromises = Object.entries(newBalances).filter(([type, balance]) => {
-                      return leaveBalances[type] !== balance;
-                    }).map(async ([type, balance]) => {
-                      const response = await fetch(`${API_BASE_URL}/leave-balances/${type}`, {
-                        method: 'PUT',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ balance })
-                      });
-                      
-                      if (!response.ok) {
-                        throw new Error(`Failed to update ${type} balance`);
-                      }
-                      
-                      return response.json();
-                    });
-                    
-                    await Promise.all(updatePromises);
-                    setLeaveBalances(newBalances);
-                  } catch (error) {
-                    console.error('Error updating leave balances:', error);
-                    fetchLeaveBalances();
-                  }
-                }}
+                onUpdateLeaveBalances={handleUpdateLeaveBalances}
               />
               </Suspense>
             </section>
