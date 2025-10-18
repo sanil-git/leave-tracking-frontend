@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Calendar, Plane, TrendingUp, Clock, MapPin } from 'lucide-react';
 
 const VacationPlanner = ({ holidays, vacations, leaveBalances: initialLeaveBalances, onUpdateLeaveBalances, onNavigateToDate, isLoading = false }) => {
-  const [leaveBalances, setLeaveBalances] = useState(initialLeaveBalances || { EL: 30, SL: 6, CL: 3 });
+  const [leaveBalances, setLeaveBalances] = useState(initialLeaveBalances || { EL: 0, SL: 0, CL: 0 });
   const [isEditingBalances, setIsEditingBalances] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 

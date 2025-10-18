@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import NotificationBell from './components/NotificationBell';
 import SkipNavigation from './components/ui/SkipNavigation';
 import LanguageToggle from './components/LanguageToggle';
+import OnboardingModal from './components/OnboardingModal';
 import './App.css';
 import './index.css';
 import './calendar-tailwind.css'; // Beautiful calendar styling
@@ -78,6 +79,7 @@ function App() {
   const [calendarDate, setCalendarDate] = useState(new Date());
   const [, startHolidayTransition] = useTransition();
   const [activePage, setActivePage] = useState('dashboard'); // 'dashboard' or 'team'
+  const [showOnboarding, setShowOnboarding] = useState(false);
   
   // Team data prefetching state
   const [teamDataPrefetched, setTeamDataPrefetched] = useState(false);
@@ -352,6 +354,21 @@ function App() {
     }
   }, [token, vacations]);
 
+  // Onboarding handlers
+  const handleOnboardingComplete = async (balances) => {
+    // Save balances
+    await handleUpdateLeaveBalances(balances);
+    // Mark onboarding as completed
+    localStorage.setItem('onboarding_completed', 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleOnboardingSkip = () => {
+    // Mark onboarding as completed even if skipped
+    localStorage.setItem('onboarding_completed', 'true');
+    setShowOnboarding(false);
+  };
+
   // Memoized holiday operation functions
   const handleAddHoliday = useCallback(async (holidayData) => {
     try {
@@ -440,6 +457,16 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, token, initialDataFetched]);
+
+  // Check if new user needs onboarding (has zero leave balances)
+  useEffect(() => {
+    if (user && leaveBalances && Object.keys(leaveBalances).length > 0) {
+      const hasZeroBalances = leaveBalances.EL === 0 && leaveBalances.SL === 0 && leaveBalances.CL === 0;
+      if (hasZeroBalances && !localStorage.getItem('onboarding_completed')) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, leaveBalances]);
 
   // Fetch AI insights when vacations change (with debounce)
   useEffect(() => {
@@ -614,6 +641,14 @@ function App() {
 
   return (
     <NotificationProvider>
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <OnboardingModal 
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      )}
+      
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
       <SkipNavigation />
       <header id="navigation" className="bg-white shadow-sm border-b border-gray-200" role="banner">
